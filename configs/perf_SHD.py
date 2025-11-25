@@ -64,8 +64,6 @@ class Config():
     
     rec_delay_init_gain = 1.0 
     
-    population_delay_init = 15
-    
     sigma_init = 10.0
     sigma_decay = 0.95
     
