@@ -37,13 +37,3 @@ learning rates. `best.pth` is the epoch with the best validation accuracy and is
 reported number comes from. `last.pth` is not distributed, as no analysis reads it. `sigma`, the
 delay spread, is a plain attribute rather than a buffer, so it is absent from the state dict and
 evaluation code must set it to zero. Everything in `experiments/make_figures/` does.
-
-## What the older runs are missing
-
-The SSC, PS-MNIST and AL runs predate parts of what the later HAR and Mackey-Glass sweeps write.
-None of the SSC or PS-MNIST runs carry `init_delays.npz`, nor do 20 of the 30 AL runs, and the
-three SSC feedforward-delay baselines have neither `final_test.json` nor `final_delays.npz`.
-Every run's `config.json` records only the hyperparameters that run overrode: the rest are the
-defaults in `configs/perf_<BENCHMARK>.py`. Run directories are named `run_seed<N>_<timestamp>`,
-and the AL ones sit under `perf_triton/` rather than `perf/`, the analyses glob `*seed<N>_*` and
-take the newest match, so the layout does not matter to them.
