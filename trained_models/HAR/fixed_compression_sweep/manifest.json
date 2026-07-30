@@ -1,0 +1,385 @@
+{
+  "sweep_root": "./exp/HAR/fixed_compression_sweep",
+  "axis": "std",
+  "models": [
+    "SNN_fixed_recurrent_delays",
+    "SNN_fixed_synaptic_recurrent_delays"
+  ],
+  "delay_std_init": null,
+  "values": [
+    0.5,
+    1.0,
+    2.0,
+    3.0,
+    5.0,
+    8.0
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "round_pos": true,
+  "runs": [
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 1.0,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 75.16891891891892,
+      "run_dir": "SNN_fixed_recurrent_delays/std1/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 0.5,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 76.38206388206389,
+      "run_dir": "SNN_fixed_recurrent_delays/std0.5/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 0.5,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 70.10135135135135,
+      "run_dir": "SNN_fixed_recurrent_delays/std0.5/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 0.5,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 76.33599508599508,
+      "run_dir": "SNN_fixed_recurrent_delays/std0.5/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 1.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 77.77948402948402,
+      "run_dir": "SNN_fixed_recurrent_delays/std1/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 1.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 79.91400491400492,
+      "run_dir": "SNN_fixed_recurrent_delays/std1/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 2.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 81.18857493857494,
+      "run_dir": "SNN_fixed_recurrent_delays/std2/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 2.0,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 80.98894348894349,
+      "run_dir": "SNN_fixed_recurrent_delays/std2/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 2.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 80.82002457002457,
+      "run_dir": "SNN_fixed_recurrent_delays/std2/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 3.0,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.61670761670761,
+      "run_dir": "SNN_fixed_recurrent_delays/std3/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 3.0,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.0945945945946,
+      "run_dir": "SNN_fixed_recurrent_delays/std3/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 3.0,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 80.98894348894349,
+      "run_dir": "SNN_fixed_recurrent_delays/std3/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 5.0,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 83.32309582309583,
+      "run_dir": "SNN_fixed_recurrent_delays/std5/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 5.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.81633906633907,
+      "run_dir": "SNN_fixed_recurrent_delays/std5/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 5.0,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.00061425061425,
+      "run_dir": "SNN_fixed_recurrent_delays/std5/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 8.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.32309582309583,
+      "run_dir": "SNN_fixed_recurrent_delays/std8/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 0.5,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 72.72727272727273,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std0.5/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 0.5,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 75.07678132678133,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std0.5/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 8.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.27886977886978,
+      "run_dir": "SNN_fixed_recurrent_delays/std8/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "axis": "std",
+      "value": 8.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.81633906633907,
+      "run_dir": "SNN_fixed_recurrent_delays/std8/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 0.5,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 75.87530712530713,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std0.5/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 1.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 74.33968058968058,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std1/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 1.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 78.68550368550369,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std1/seed1"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 1.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 78.05589680589681,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std1/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 2.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 81.06572481572482,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std2/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 2.0,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 80.66646191646191,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std2/seed1"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 2.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 80.57432432432432,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std2/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 3.0,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.84889434889435,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std3/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 3.0,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 81.91031941031942,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std3/seed1"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 3.0,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.18673218673219,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std3/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 5.0,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.8470515970516,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std5/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 5.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.98525798525799,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std5/seed1"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 5.0,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.43243243243244,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std5/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 8.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.86240786240786,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std8/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 8.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.63206388206389,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std8/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "axis": "std",
+      "value": 8.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.72420147420148,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/std8/seed1"
+    }
+  ]
+}

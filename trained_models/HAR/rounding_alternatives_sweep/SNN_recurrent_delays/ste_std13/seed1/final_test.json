@@ -1,0 +1,11 @@
+{
+  "acc": 82.46314496314497,
+  "loss": 0.5379886031150818,
+  "best_val": 82.46314496314497,
+  "best_epoch": 91,
+  "delay_std_init": 13,
+  "mode": "ste",
+  "round_pos_each_epoch": false,
+  "round_mode": "nearest",
+  "round_delays": true
+}

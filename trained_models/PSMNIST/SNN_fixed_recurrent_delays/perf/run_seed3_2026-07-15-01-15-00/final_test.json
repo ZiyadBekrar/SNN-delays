@@ -1,0 +1,8 @@
+{
+  "acc": 95.52,
+  "loss": 0.16376585141115357,
+  "best_val": 95.47058823529412,
+  "best_epoch": 172,
+  "ckpt": "best.pth",
+  "kernel": "triton_exact"
+}

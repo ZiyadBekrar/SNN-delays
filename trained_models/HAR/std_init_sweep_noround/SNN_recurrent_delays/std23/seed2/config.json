@@ -1,0 +1,6 @@
+{
+  "seed": 2,
+  "delay_std_init": 23,
+  "round_pos_each_epoch": false,
+  "results_dir": "./exp/HAR/std_init_sweep_noround/SNN_recurrent_delays/std23/seed2"
+}

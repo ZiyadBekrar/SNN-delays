@@ -1,0 +1,263 @@
+{
+  "sweep_root": "./exp/HAR/weight_decay_sweep",
+  "axis": "wd",
+  "models": [
+    "SNN_recurrent_delays",
+    "SNN_synaptic_recurrent_delays"
+  ],
+  "delay_std_init": 8.0,
+  "values": [
+    0.04,
+    0.05,
+    0.06,
+    0.07
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "round_pos": true,
+  "runs": [
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.04,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.56879606879608,
+      "run_dir": "SNN_recurrent_delays/wd0.04/seed0"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.04,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 81.89496314496314,
+      "run_dir": "SNN_recurrent_delays/wd0.04/seed1"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.05,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.55528255528256,
+      "run_dir": "SNN_recurrent_delays/wd0.05/seed0"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.04,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.66277641277641,
+      "run_dir": "SNN_recurrent_delays/wd0.04/seed2"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.05,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 81.31142506142506,
+      "run_dir": "SNN_recurrent_delays/wd0.05/seed2"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.05,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.23280098280098,
+      "run_dir": "SNN_recurrent_delays/wd0.05/seed1"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.06,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.71068796068796,
+      "run_dir": "SNN_recurrent_delays/wd0.06/seed0"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.06,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.83353808353809,
+      "run_dir": "SNN_recurrent_delays/wd0.06/seed1"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.06,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 80.92751842751842,
+      "run_dir": "SNN_recurrent_delays/wd0.06/seed2"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.07,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 80.71253071253071,
+      "run_dir": "SNN_recurrent_delays/wd0.07/seed0"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.07,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.49570024570025,
+      "run_dir": "SNN_recurrent_delays/wd0.07/seed2"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "axis": "wd",
+      "value": 0.07,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.75675675675676,
+      "run_dir": "SNN_recurrent_delays/wd0.07/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.04,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.4477886977887,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.04/seed0"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.04,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.37100737100737,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.04/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.05,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.63390663390663,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.05/seed0"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.04,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.06388206388206,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.04/seed2"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.05,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 80.497542997543,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.05/seed2"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.05,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 77.11916461916462,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.05/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.06,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 80.46683046683047,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.06/seed0"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.06,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 80.77395577395578,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.06/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.06,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 79.13083538083538,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.06/seed2"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.07,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 79.26904176904176,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.07/seed0"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.07,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 80.08292383292384,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.07/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "axis": "wd",
+      "value": 0.07,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 80.34398034398035,
+      "run_dir": "SNN_synaptic_recurrent_delays/wd0.07/seed2"
+    }
+  ]
+}

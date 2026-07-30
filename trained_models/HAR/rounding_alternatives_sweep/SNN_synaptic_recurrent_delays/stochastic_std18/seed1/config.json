@@ -1,0 +1,8 @@
+{
+  "seed": 1,
+  "delay_std_init": 18,
+  "round_pos_each_epoch": true,
+  "round_mode": "stochastic",
+  "round_delays": false,
+  "results_dir": "./exp/HAR/rounding_alternatives_sweep/SNN_synaptic_recurrent_delays/stochastic_std18/seed1"
+}

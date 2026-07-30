@@ -1,0 +1,8 @@
+{
+  "acc": 82.24,
+  "acc_rounded": 82.24,
+  "loss": 0.3905356824398041,
+  "best_val": 82.24,
+  "best_epoch": 176,
+  "round_pos_each_epoch": true
+}

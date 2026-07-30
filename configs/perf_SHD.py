@@ -1,5 +1,12 @@
+"""Hyperparameters for SHD (the SHD appendix).
+
+The older two-hidden-layer stack with batch norm and input augmentation, kept for
+the appendix result. SHD has no validation split, which is part of why the paper
+argues against using it as a benchmark.
+"""
+
 from spikingjelly.activation_based import neuron, surrogate
-from src.utils import Triangle
+from delrec.utils import Triangle
 
 class Config():
     
@@ -66,6 +73,9 @@ class Config():
     
     sigma_init = 10.0
     sigma_decay = 0.95
+
+    # Round the (fractional) delays to integers before each eval epoch
+    round_pos_each_epoch = True
     
     ### Feedforward delays ###
     

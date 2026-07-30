@@ -1,0 +1,8 @@
+{
+  "seed": 1,
+  "delay_std_init": 23,
+  "round_pos_each_epoch": false,
+  "round_mode": "nearest",
+  "round_delays": true,
+  "results_dir": "./exp/HAR/rounding_alternatives_sweep/SNN_synaptic_recurrent_delays/ste_std23/seed1"
+}

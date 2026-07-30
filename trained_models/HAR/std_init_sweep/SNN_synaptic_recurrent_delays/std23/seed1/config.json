@@ -1,0 +1,7 @@
+{
+  "seed": 1,
+  "delay_std_init": 23,
+  "round_pos_each_epoch": true,
+  "batch_size": 256,
+  "results_dir": "./exp/HAR/sweep_delaystd_roundpos1_20260625-163618/SNN_synaptic_recurrent_delays/std23/seed1"
+}

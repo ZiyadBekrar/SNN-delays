@@ -1,0 +1,8 @@
+{
+  "seed": 1,
+  "delay_std_init": 3.0,
+  "weight_decay_positions": 0.0,
+  "round_pos_each_epoch": true,
+  "sigma_init": 0.0,
+  "results_dir": "./exp/HAR/fixed_compression_sweep/SNN_fixed_synaptic_recurrent_delays/std3/seed1"
+}

@@ -1,0 +1,10 @@
+Model,Neuron,Delays,AL,HAR
+RSNN,LIF,no,56.50,77.32
+Spike-Driven Transformer [35],LIF,no,58.00,71.07
+CE-LIF [36],CE-LIF,no,60.62,80.83
+GSN [37],LIF,no,67.22,82.31
+Spiking TCN [38],LIF,no,69.88,82.41
+LTC [39],LTC,no,79.04,82.03
+Gated Spiking Unit [40],LIF,no,80.42,89.16
+Binary S4D [40],LIF (SSM),no,81.44,89.37
+DelRec (ours),LIF,Rec. (ax.),85.74+/-1.49,83.53+/-0.26

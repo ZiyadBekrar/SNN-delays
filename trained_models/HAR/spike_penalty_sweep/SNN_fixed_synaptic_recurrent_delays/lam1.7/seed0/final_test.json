@@ -1,0 +1,10 @@
+{
+  "acc": 81.25,
+  "loss": 0.5860560169586768,
+  "best_val": 81.25,
+  "best_epoch": 97,
+  "spike_penalty": 1.7,
+  "firing_rate": 0.12471144937551187,
+  "spike_cost": 0.062254052179364056,
+  "delay_std_init": 8.0
+}

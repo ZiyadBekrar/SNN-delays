@@ -1,0 +1,7 @@
+{
+  "seed": 2,
+  "mg_tau": 40.0,
+  "prediction_horizon": 40,
+  "sigma_init": 0.0,
+  "results_dir": "./exp/MG/mackey_glass_sweep/learned_no_annealing/tau40_H40/seed2"
+}

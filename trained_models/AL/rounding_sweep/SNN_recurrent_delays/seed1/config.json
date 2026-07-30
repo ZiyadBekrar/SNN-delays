@@ -1,0 +1,5 @@
+{
+  "seed": 1,
+  "round_pos_each_epoch": true,
+  "results_dir": "./exp/AL/rounding_sweep/SNN_recurrent_delays/seed1"
+}

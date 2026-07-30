@@ -1,5 +1,11 @@
+"""Hyperparameters for permuted sequential MNIST (the hyperparameter tables of the paper).
+
+Hidden layers [64, 212, 212] over T = 784, delays drawn uniformly on [0, 20].
+Each run permutes the pixels with its own draw, saved next to the checkpoint.
+"""
+
 from spikingjelly.activation_based import neuron, surrogate
-from src.utils import Triangle
+from delrec.utils import Triangle
 
 class Config():
     
@@ -20,7 +26,7 @@ class Config():
     
     results_dir = ''
     
-    num_workers = 8
+    num_workers = 0
     
     ### Model architechture ###
     
@@ -55,16 +61,20 @@ class Config():
     
     use_sig_p = True
     
-    init_rec_delay = 'half_normal' # 'uniform' or 'half_normal'
+    init_rec_delay = 'uniform' # 'uniform' or 'half_normal'
     # if 'uniform':
-    max_rec_delay = 50 
+    max_rec_delay = 20 #50 
+    init_recdel_offset = 0
     # if 'half_normal':
-    delay_std_init = 12 
+    delay_std_init = 30 #12 
     
     rec_delay_init_gain = 1.0
     
-    sigma_init = 10.0
-    sigma_decay = 0.95
+    sigma_init = 1. #10.0
+    sigma_decay = 0.8 #0.95
+
+    # Round the (fractional) delays to integers before each eval epoch
+    round_pos_each_epoch = True
     
     ### Feedforward delays ###
     
@@ -85,9 +95,9 @@ class Config():
     optim = 'adamW' # 'adam' or 'adamw'
     
     scheduler_weights = 'onecycle' # 'cos' or 'onecycle'
-    scheduler_pos = 'onecycle' # 'onecycle' or 'cos'
+    scheduler_pos = 'cos' #'onecycle' # 'onecycle' or 'cos'
     
     lr_w = 1e-3
-    lr_positions = 5e-2
+    lr_positions = 1e-1 #5e-2
     
     weight_decay = 1e-2

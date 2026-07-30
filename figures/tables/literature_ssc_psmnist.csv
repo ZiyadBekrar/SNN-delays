@@ -1,0 +1,17 @@
+Dataset,Model,Neuron,Rec.,Delays,Param,Seeds,Test Acc. [%]
+SSC,Adaptive RSNN [6],AdLIF,yes,no,0.78M,1,74.20
+SSC,EventProp [22],LIF,no,Ff.,~5M,8,76.1+/-1.0
+SSC,Bullet trains [31],LIF,no,Ff.,n/r,5,77.35+/-0.23
+SSC,RadLIF [7],RadLIF,yes,no,3.9M,1,77.40
+SSC,cAdLIF [15],cAdLIF,no,no,0.35M,1,77.50
+SSC,d-cAdLIF [15],cAdLIF,no,Ff.,0.7M,10,80.23+/-0.07
+SSC,SE-adLIF [8],SE-adLIF,yes,no,1.6M,20,80.44+/-0.26
+SSC,DCLS [14],LIF,no,Ff. (syn.),2.5M,5,80.69+/-0.21
+SSC,ASRC-SNN [21],LIF,yes,Rec.,0.37M,1,81.54
+SSC,SiLIF [32],SiLIF (SSM),yes,no,0.35M,10,82.03+/-0.25
+SSC,DelRec (ours),LIF,yes,Rec. (ax.),0.37M,5,82.42+/-0.23
+PSMNIST,GLIF [33],GLIF,yes,no,0.15M,1,90.47
+PSMNIST,Adaptive RSNN [6],AdLIF,yes,no,0.15M,1,94.30
+PSMNIST,BRF [34],RF,yes,no,69k,1,95.20
+PSMNIST,ASRC-SNN [21],LIF,yes,Rec.,0.15M,1,95.77
+PSMNIST,DelRec (ours),LIF,yes,Rec. (syn.),0.25M,5,96.63+/-0.12

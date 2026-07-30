@@ -1,0 +1,8 @@
+{
+  "seed": 1,
+  "delay_std_init": 8.0,
+  "weight_decay_positions": 0.0,
+  "spike_penalty": 1.7,
+  "round_pos_each_epoch": true,
+  "results_dir": "./exp/HAR/spike_penalty_sweep/SNN_synaptic_recurrent_delays/lam1.7/seed1"
+}

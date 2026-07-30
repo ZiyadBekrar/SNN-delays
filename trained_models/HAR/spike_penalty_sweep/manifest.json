@@ -1,0 +1,565 @@
+{
+  "sweep_root": "./exp/HAR/spike_penalty_sweep",
+  "models": [
+    "SNN_recurrent_delays",
+    "SNN_synaptic_recurrent_delays",
+    "SNN_fixed_recurrent_delays",
+    "SNN_fixed_synaptic_recurrent_delays",
+    "SNN_vanilla_recurrent"
+  ],
+  "delay_std_init": 8.0,
+  "spike_penalties": [
+    0.2,
+    0.5,
+    1.7,
+    5.0
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "round_pos": true,
+  "runs": [
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 84.16769041769042,
+      "run_dir": "SNN_recurrent_delays/lam0.5/seed0"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 83.35380835380835,
+      "run_dir": "SNN_recurrent_delays/lam0.2/seed2"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 84.64373464373465,
+      "run_dir": "SNN_recurrent_delays/lam0.2/seed0"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 84.0909090909091,
+      "run_dir": "SNN_recurrent_delays/lam0.2/seed1"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.98341523341523,
+      "run_dir": "SNN_recurrent_delays/lam1.7/seed0"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 83.72235872235872,
+      "run_dir": "SNN_recurrent_delays/lam0.5/seed1"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 84.53624078624078,
+      "run_dir": "SNN_recurrent_delays/lam1.7/seed1"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 83.75307125307125,
+      "run_dir": "SNN_recurrent_delays/lam0.5/seed2"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 78.88513513513513,
+      "run_dir": "SNN_recurrent_delays/lam5/seed0"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.50921375921376,
+      "run_dir": "SNN_recurrent_delays/lam1.7/seed2"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 77.50307125307125,
+      "run_dir": "SNN_recurrent_delays/lam5/seed2"
+    },
+    {
+      "model": "SNN_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 80.37469287469287,
+      "run_dir": "SNN_recurrent_delays/lam5/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 85.1504914004914,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam0.2/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 84.98157248157248,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam0.5/seed0"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 84.76658476658477,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam0.2/seed0"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 84.42874692874693,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam0.2/seed2"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 85.61117936117937,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam0.5/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.70700245700246,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam0.5/seed2"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 84.36732186732186,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam1.7/seed0"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 84.8433660933661,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam1.7/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.35380835380835,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam1.7/seed2"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 81.54176904176904,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam5/seed0"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.58783783783784,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam5/seed1"
+    },
+    {
+      "model": "SNN_synaptic_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.72604422604422,
+      "run_dir": "SNN_synaptic_recurrent_delays/lam5/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.93734643734643,
+      "run_dir": "SNN_fixed_recurrent_delays/lam0.2/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.79914004914005,
+      "run_dir": "SNN_fixed_recurrent_delays/lam0.2/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 83.49201474201475,
+      "run_dir": "SNN_fixed_recurrent_delays/lam0.2/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 83.82985257985258,
+      "run_dir": "SNN_fixed_recurrent_delays/lam0.5/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 84.27518427518427,
+      "run_dir": "SNN_fixed_recurrent_delays/lam0.5/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.37100737100737,
+      "run_dir": "SNN_fixed_recurrent_delays/lam0.5/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 80.02149877149877,
+      "run_dir": "SNN_fixed_recurrent_delays/lam1.7/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 84.42874692874693,
+      "run_dir": "SNN_fixed_recurrent_delays/lam1.7/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 79.85257985257985,
+      "run_dir": "SNN_fixed_recurrent_delays/lam5/seed0"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 82.4477886977887,
+      "run_dir": "SNN_fixed_recurrent_delays/lam1.7/seed2"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 78.30159705159706,
+      "run_dir": "SNN_fixed_recurrent_delays/lam5/seed1"
+    },
+    {
+      "model": "SNN_fixed_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 78.43980343980344,
+      "run_dir": "SNN_fixed_recurrent_delays/lam5/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.5995085995086,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam0.2/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 83.26167076167076,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam0.2/seed1"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 0.2,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 82.64742014742015,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam0.2/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 83.12346437346437,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam0.5/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 84.02948402948402,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam0.5/seed1"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 0.5,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 81.77211302211302,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam0.5/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 81.25,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam1.7/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 83.53808353808354,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam1.7/seed1"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 79.68366093366093,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam5/seed0"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 1.7,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 80.20577395577395,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam1.7/seed2"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 80.497542997543,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam5/seed1"
+    },
+    {
+      "model": "SNN_fixed_synaptic_recurrent_delays",
+      "spike_penalty": 5.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 77.44164619164619,
+      "run_dir": "SNN_fixed_synaptic_recurrent_delays/lam5/seed2"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 0.2,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 67.13759213759214,
+      "run_dir": "SNN_vanilla_recurrent/lam0.2/seed0"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 0.2,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 72.71191646191646,
+      "run_dir": "SNN_vanilla_recurrent/lam0.2/seed1"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 0.2,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 70.88452088452088,
+      "run_dir": "SNN_vanilla_recurrent/lam0.2/seed2"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 0.5,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 63.55958230958231,
+      "run_dir": "SNN_vanilla_recurrent/lam0.5/seed0"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 0.5,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 71.62162162162163,
+      "run_dir": "SNN_vanilla_recurrent/lam0.5/seed1"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 0.5,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 72.6504914004914,
+      "run_dir": "SNN_vanilla_recurrent/lam0.5/seed2"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 1.7,
+      "seed": 0,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 52.93304668304668,
+      "run_dir": "SNN_vanilla_recurrent/lam1.7/seed0"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 1.7,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 70.97665847665847,
+      "run_dir": "SNN_vanilla_recurrent/lam1.7/seed1"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 1.7,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 62.714987714987714,
+      "run_dir": "SNN_vanilla_recurrent/lam1.7/seed2"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 5.0,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_acc": 46.575552825552826,
+      "run_dir": "SNN_vanilla_recurrent/lam5/seed0"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 5.0,
+      "seed": 1,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 57.17137592137592,
+      "run_dir": "SNN_vanilla_recurrent/lam5/seed1"
+    },
+    {
+      "model": "SNN_vanilla_recurrent",
+      "spike_penalty": 5.0,
+      "seed": 2,
+      "gpu": 1,
+      "rc": 0,
+      "final_test_acc": 51.9963144963145,
+      "run_dir": "SNN_vanilla_recurrent/lam5/seed2"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "acc": 75.61425061425061,
+  "loss": 0.7490577193406912,
+  "best_val": 75.61425061425061,
+  "best_epoch": 30,
+  "weight_decay_positions": 0.1,
+  "delay_std_init": 8
+}

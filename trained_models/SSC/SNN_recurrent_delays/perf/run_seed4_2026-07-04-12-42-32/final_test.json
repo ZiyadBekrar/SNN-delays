@@ -1,0 +1,6 @@
+{
+  "acc": 82.71023452065548,
+  "model": "SNN_recurrent_delays",
+  "seed": 4,
+  "source": "recomputed from best.pth by scripts/verify_checkpoints.py"
+}

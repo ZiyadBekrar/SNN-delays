@@ -1,0 +1,7 @@
+{
+  "seed": 1,
+  "mg_tau": 50.0,
+  "prediction_horizon": 30,
+  "sigma_init": 0.0,
+  "results_dir": "./exp/MG/mackey_glass_sweep/no_delays/tau50_H30/seed1"
+}

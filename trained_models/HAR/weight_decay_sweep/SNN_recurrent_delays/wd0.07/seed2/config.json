@@ -1,0 +1,7 @@
+{
+  "seed": 2,
+  "delay_std_init": 8.0,
+  "weight_decay_positions": 0.07,
+  "round_pos_each_epoch": true,
+  "results_dir": "./exp/HAR/weight_decay_sweep/SNN_recurrent_delays/wd0.07/seed2"
+}

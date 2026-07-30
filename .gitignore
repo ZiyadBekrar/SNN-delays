@@ -1,0 +1,39 @@
+# Datasets and generated artifacts
+Datasets/
+# figures/ holds the generated figures and tables and IS committed:
+# they are part of what this repository publishes.
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Triton JIT
+.triton_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Model checkpoints: hosted separately, unpacked into trained_models/ by
+# fetch_checkpoints.py, which leaves the downloaded archives at the repository root
+# so a re-run skips the download.
+trained_models/**/*.pth
+delrec-checkpoints-*.tar.gz
+
+# Verification and packaging tooling for the release itself, not part of what is
+# published. build_checkpoint_archives.py writes dist/, whose archives are uploaded
+# to the Zenodo record that fetch_checkpoints.py downloads from.
+tests/
+verify_checkpoints.py
+build_checkpoint_archives.py
+dist/
+
+# Training output written by experiments/train.py and the sweeps
+exp/
+
+CLAUDE.md

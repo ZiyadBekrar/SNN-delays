@@ -1,0 +1,8 @@
+{
+  "seed": 3,
+  "sigma_init": 1.0,
+  "time_window": 784,
+  "input_dim": 1,
+  "output_dim": 10,
+  "results_dir": "./exp/PSMNIST/SNN_synaptic_recurrent_delays/perf/seed3_2026-07-15-22-07-47"
+}

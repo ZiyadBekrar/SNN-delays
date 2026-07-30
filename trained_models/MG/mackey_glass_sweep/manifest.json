@@ -1,0 +1,1948 @@
+{
+  "sweep_root": "./exp/MG/mackey_glass_sweep",
+  "families": [
+    "learned_delays",
+    "learned_no_annealing",
+    "fixed_delays",
+    "no_delays"
+  ],
+  "taus": [
+    17.0,
+    30.0,
+    40.0,
+    50.0
+  ],
+  "horizons": [
+    20,
+    30,
+    40,
+    50
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "runs": [
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.027907880038666715,
+      "run_dir": "learned_delays/tau17_H20/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.11960470997011298,
+      "run_dir": "learned_delays/tau17_H30/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.045666090410592934,
+      "run_dir": "learned_delays/tau17_H40/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12949156209340898,
+      "run_dir": "learned_delays/tau17_H50/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.03615214323137153,
+      "run_dir": "learned_delays/tau17_H20/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.036615991679643335,
+      "run_dir": "learned_delays/tau17_H20/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08673677593781437,
+      "run_dir": "learned_delays/tau17_H30/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.10746035496632617,
+      "run_dir": "learned_delays/tau17_H30/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07541343736210006,
+      "run_dir": "learned_delays/tau17_H40/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05991409146860258,
+      "run_dir": "learned_delays/tau17_H40/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.14485946527287497,
+      "run_dir": "learned_delays/tau17_H50/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.14222841159118144,
+      "run_dir": "learned_delays/tau17_H50/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04905695214436106,
+      "run_dir": "learned_delays/tau30_H20/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.03674027088738849,
+      "run_dir": "learned_delays/tau30_H20/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.02995355024295524,
+      "run_dir": "learned_delays/tau30_H30/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.03999730042824587,
+      "run_dir": "learned_delays/tau30_H30/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.03377216083642658,
+      "run_dir": "learned_delays/tau30_H30/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.10016530890171475,
+      "run_dir": "learned_delays/tau30_H40/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04003452709817724,
+      "run_dir": "learned_delays/tau30_H20/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.10917257227543109,
+      "run_dir": "learned_delays/tau30_H40/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.10399596572308936,
+      "run_dir": "learned_delays/tau30_H40/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1076931531344702,
+      "run_dir": "learned_delays/tau30_H50/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.16614573921145437,
+      "run_dir": "learned_delays/tau30_H50/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.11021414144784292,
+      "run_dir": "learned_delays/tau30_H50/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05542078695313761,
+      "run_dir": "learned_delays/tau40_H30/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.057641099116037306,
+      "run_dir": "learned_delays/tau40_H30/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.055557241772266175,
+      "run_dir": "learned_delays/tau40_H30/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05871158081279335,
+      "run_dir": "learned_delays/tau40_H20/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06261513710687686,
+      "run_dir": "learned_delays/tau40_H20/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04870629769714035,
+      "run_dir": "learned_delays/tau40_H20/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04014864767305276,
+      "run_dir": "learned_delays/tau40_H40/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04192720844298345,
+      "run_dir": "learned_delays/tau40_H40/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.040002239623928876,
+      "run_dir": "learned_delays/tau40_H40/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.10767400816649843,
+      "run_dir": "learned_delays/tau40_H50/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.10770750328442685,
+      "run_dir": "learned_delays/tau40_H50/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12007114195381878,
+      "run_dir": "learned_delays/tau40_H50/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06580171868445177,
+      "run_dir": "learned_delays/tau50_H30/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12280174199808248,
+      "run_dir": "learned_delays/tau50_H20/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.13063521734969089,
+      "run_dir": "learned_delays/tau50_H20/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.10165665483879995,
+      "run_dir": "learned_delays/tau50_H20/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06933133788334377,
+      "run_dir": "learned_delays/tau50_H30/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06064227271837513,
+      "run_dir": "learned_delays/tau50_H30/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.0659977729272531,
+      "run_dir": "learned_delays/tau50_H40/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06094220985942258,
+      "run_dir": "learned_delays/tau50_H40/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05316967084288385,
+      "run_dir": "learned_delays/tau50_H40/seed2"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.038562967470157125,
+      "run_dir": "learned_delays/tau50_H50/seed0"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.03882689214900081,
+      "run_dir": "learned_delays/tau50_H50/seed1"
+    },
+    {
+      "family": "learned_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.044228265754742625,
+      "run_dir": "learned_delays/tau50_H50/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04336201714230802,
+      "run_dir": "learned_no_annealing/tau17_H20/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05354881657504738,
+      "run_dir": "learned_no_annealing/tau17_H20/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.10925125179960066,
+      "run_dir": "learned_no_annealing/tau17_H30/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05268142646056391,
+      "run_dir": "learned_no_annealing/tau17_H20/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1925241119426103,
+      "run_dir": "learned_no_annealing/tau17_H30/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12688429758197647,
+      "run_dir": "learned_no_annealing/tau17_H30/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07137009957091965,
+      "run_dir": "learned_no_annealing/tau17_H40/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07551191684729534,
+      "run_dir": "learned_no_annealing/tau17_H40/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08652625675147839,
+      "run_dir": "learned_no_annealing/tau17_H40/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.14223931442035595,
+      "run_dir": "learned_no_annealing/tau17_H50/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1549887265355432,
+      "run_dir": "learned_no_annealing/tau17_H50/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.17757521627345318,
+      "run_dir": "learned_no_annealing/tau17_H50/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.0514135546481742,
+      "run_dir": "learned_no_annealing/tau30_H20/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06281041244251755,
+      "run_dir": "learned_no_annealing/tau30_H20/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05637421945939797,
+      "run_dir": "learned_no_annealing/tau30_H20/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04642973633447069,
+      "run_dir": "learned_no_annealing/tau30_H30/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04026656227825335,
+      "run_dir": "learned_no_annealing/tau30_H30/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04502752525250956,
+      "run_dir": "learned_no_annealing/tau30_H30/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.13902999232759997,
+      "run_dir": "learned_no_annealing/tau30_H40/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.15335275012458335,
+      "run_dir": "learned_no_annealing/tau30_H40/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1370295912465288,
+      "run_dir": "learned_no_annealing/tau30_H40/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1486683256716961,
+      "run_dir": "learned_no_annealing/tau30_H50/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.20412578947649124,
+      "run_dir": "learned_no_annealing/tau30_H50/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1474141493734607,
+      "run_dir": "learned_no_annealing/tau30_H50/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08088021128349523,
+      "run_dir": "learned_no_annealing/tau40_H20/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08789246946325366,
+      "run_dir": "learned_no_annealing/tau40_H20/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06903291929201535,
+      "run_dir": "learned_no_annealing/tau40_H30/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07606312130179081,
+      "run_dir": "learned_no_annealing/tau40_H30/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07492230669070278,
+      "run_dir": "learned_no_annealing/tau40_H20/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06367739039682925,
+      "run_dir": "learned_no_annealing/tau40_H30/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06066133080084619,
+      "run_dir": "learned_no_annealing/tau40_H40/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.050985387659082934,
+      "run_dir": "learned_no_annealing/tau40_H40/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05508668781939787,
+      "run_dir": "learned_no_annealing/tau40_H40/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1311365647248532,
+      "run_dir": "learned_no_annealing/tau40_H50/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12564641385948871,
+      "run_dir": "learned_no_annealing/tau40_H50/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1401670923963476,
+      "run_dir": "learned_no_annealing/tau40_H50/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12362812345160494,
+      "run_dir": "learned_no_annealing/tau50_H20/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.09122372840172122,
+      "run_dir": "learned_no_annealing/tau50_H30/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08891906073193771,
+      "run_dir": "learned_no_annealing/tau50_H30/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.09312478454614004,
+      "run_dir": "learned_no_annealing/tau50_H30/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.14509809431737986,
+      "run_dir": "learned_no_annealing/tau50_H20/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12094927507773869,
+      "run_dir": "learned_no_annealing/tau50_H20/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07904295074687465,
+      "run_dir": "learned_no_annealing/tau50_H40/seed0"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.099773816197026,
+      "run_dir": "learned_no_annealing/tau50_H40/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07066513579174019,
+      "run_dir": "learned_no_annealing/tau50_H40/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05657737442695707,
+      "run_dir": "learned_no_annealing/tau50_H50/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12502579979987746,
+      "run_dir": "fixed_delays/tau17_H30/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04440358219176254,
+      "run_dir": "fixed_delays/tau17_H20/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05540609862827077,
+      "run_dir": "fixed_delays/tau17_H20/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.052205486322383914,
+      "run_dir": "fixed_delays/tau17_H20/seed2"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.048586626816491174,
+      "run_dir": "learned_no_annealing/tau50_H50/seed1"
+    },
+    {
+      "family": "learned_no_annealing",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04865911818640703,
+      "run_dir": "learned_no_annealing/tau50_H50/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.20692371456792008,
+      "run_dir": "fixed_delays/tau17_H30/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12495382793622399,
+      "run_dir": "fixed_delays/tau17_H30/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07011988976089682,
+      "run_dir": "fixed_delays/tau17_H40/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07590980172093088,
+      "run_dir": "fixed_delays/tau17_H40/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08222155389375425,
+      "run_dir": "fixed_delays/tau17_H40/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.14831299732356862,
+      "run_dir": "fixed_delays/tau17_H50/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.15314416884109078,
+      "run_dir": "fixed_delays/tau17_H50/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.17288100012687482,
+      "run_dir": "fixed_delays/tau17_H50/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05494460152096649,
+      "run_dir": "fixed_delays/tau30_H20/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06788671318882754,
+      "run_dir": "fixed_delays/tau30_H20/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05008277013788233,
+      "run_dir": "fixed_delays/tau30_H30/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05769997201094552,
+      "run_dir": "fixed_delays/tau30_H20/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04176927701509343,
+      "run_dir": "fixed_delays/tau30_H30/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.046780188107974664,
+      "run_dir": "fixed_delays/tau30_H30/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.13193371519388347,
+      "run_dir": "fixed_delays/tau30_H40/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.15618529280303994,
+      "run_dir": "fixed_delays/tau30_H40/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1381165813086243,
+      "run_dir": "fixed_delays/tau30_H40/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1471557915986715,
+      "run_dir": "fixed_delays/tau30_H50/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.18832159291769773,
+      "run_dir": "fixed_delays/tau30_H50/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.14460536128972,
+      "run_dir": "fixed_delays/tau30_H50/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08137688878913016,
+      "run_dir": "fixed_delays/tau40_H20/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08965931285563529,
+      "run_dir": "fixed_delays/tau40_H20/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07406231858340522,
+      "run_dir": "fixed_delays/tau40_H20/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06893832523184262,
+      "run_dir": "fixed_delays/tau40_H30/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07662073265221883,
+      "run_dir": "fixed_delays/tau40_H30/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06681996706046357,
+      "run_dir": "fixed_delays/tau40_H30/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.0797808665172235,
+      "run_dir": "fixed_delays/tau40_H40/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06002288472489586,
+      "run_dir": "fixed_delays/tau40_H40/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.06378087978950987,
+      "run_dir": "fixed_delays/tau40_H40/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1309631369879751,
+      "run_dir": "fixed_delays/tau40_H50/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.13985029488507372,
+      "run_dir": "fixed_delays/tau40_H50/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.155487446868131,
+      "run_dir": "fixed_delays/tau40_H50/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.11709127279572626,
+      "run_dir": "fixed_delays/tau50_H20/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1441933377653539,
+      "run_dir": "fixed_delays/tau50_H20/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.09052221766650738,
+      "run_dir": "fixed_delays/tau50_H30/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12152103483290679,
+      "run_dir": "fixed_delays/tau50_H20/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.09007489267013222,
+      "run_dir": "fixed_delays/tau50_H30/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08961945793479131,
+      "run_dir": "fixed_delays/tau50_H30/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.08055233132204778,
+      "run_dir": "fixed_delays/tau50_H40/seed0"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.09657491560618493,
+      "run_dir": "fixed_delays/tau50_H40/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.07301723991466418,
+      "run_dir": "fixed_delays/tau50_H40/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.18775170735116506,
+      "run_dir": "no_delays/tau17_H20/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.18529294646546085,
+      "run_dir": "no_delays/tau17_H30/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1757620289905716,
+      "run_dir": "no_delays/tau17_H20/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.19436042066007145,
+      "run_dir": "no_delays/tau17_H20/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05595928323160758,
+      "run_dir": "fixed_delays/tau50_H50/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1960468260438535,
+      "run_dir": "no_delays/tau17_H30/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1783988507367401,
+      "run_dir": "no_delays/tau17_H30/seed2"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.05030964648334098,
+      "run_dir": "fixed_delays/tau50_H50/seed1"
+    },
+    {
+      "family": "fixed_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.04887449246595456,
+      "run_dir": "fixed_delays/tau50_H50/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.2698060359884975,
+      "run_dir": "no_delays/tau17_H40/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.22371769481056394,
+      "run_dir": "no_delays/tau17_H50/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.21356354073162187,
+      "run_dir": "no_delays/tau17_H40/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.21751116684056815,
+      "run_dir": "no_delays/tau17_H40/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.23692674644898204,
+      "run_dir": "no_delays/tau17_H50/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 17.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.19723950415394745,
+      "run_dir": "no_delays/tau17_H50/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.27056275183015366,
+      "run_dir": "no_delays/tau30_H20/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.2740885699612537,
+      "run_dir": "no_delays/tau30_H20/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12934974597548762,
+      "run_dir": "no_delays/tau30_H30/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.2956977756572238,
+      "run_dir": "no_delays/tau30_H20/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.13798006275983807,
+      "run_dir": "no_delays/tau30_H30/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.18010079374929963,
+      "run_dir": "no_delays/tau30_H30/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.39306527009317926,
+      "run_dir": "no_delays/tau30_H40/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.4394073177216797,
+      "run_dir": "no_delays/tau30_H40/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.4245958655513673,
+      "run_dir": "no_delays/tau30_H40/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.4957595774393011,
+      "run_dir": "no_delays/tau30_H50/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.5093806321963896,
+      "run_dir": "no_delays/tau30_H50/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 30.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.4671455856603621,
+      "run_dir": "no_delays/tau30_H50/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.29173748034531144,
+      "run_dir": "no_delays/tau40_H20/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.32199148120553456,
+      "run_dir": "no_delays/tau40_H20/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.2038245337047633,
+      "run_dir": "no_delays/tau40_H30/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.31236438558679674,
+      "run_dir": "no_delays/tau40_H20/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.2266868271161616,
+      "run_dir": "no_delays/tau40_H30/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.15292207150207512,
+      "run_dir": "no_delays/tau40_H30/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.13430997323640478,
+      "run_dir": "no_delays/tau40_H40/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.12797077513961494,
+      "run_dir": "no_delays/tau40_H40/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.1791074512401196,
+      "run_dir": "no_delays/tau40_H40/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.47902036527557845,
+      "run_dir": "no_delays/tau40_H50/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.4623326478735912,
+      "run_dir": "no_delays/tau40_H50/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 40.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.4760903236285338,
+      "run_dir": "no_delays/tau40_H50/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.5000089949480139,
+      "run_dir": "no_delays/tau50_H20/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.5669701511174783,
+      "run_dir": "no_delays/tau50_H20/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 20,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.5296858564378077,
+      "run_dir": "no_delays/tau50_H20/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.42271640006943756,
+      "run_dir": "no_delays/tau50_H30/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.4323755607074986,
+      "run_dir": "no_delays/tau50_H30/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.20837219577991942,
+      "run_dir": "no_delays/tau50_H40/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 30,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.4209711139156498,
+      "run_dir": "no_delays/tau50_H30/seed2"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.2251965853102803,
+      "run_dir": "no_delays/tau50_H40/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 40,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.22294577325727602,
+      "run_dir": "no_delays/tau50_H40/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 0,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.15380208479861276,
+      "run_dir": "no_delays/tau50_H50/seed0"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 1,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.14646556871365188,
+      "run_dir": "no_delays/tau50_H50/seed1"
+    },
+    {
+      "family": "no_delays",
+      "mg_tau": 50.0,
+      "horizon": 50,
+      "seed": 2,
+      "gpu": 0,
+      "rc": 0,
+      "final_test_nmse": 0.19113134026654155,
+      "run_dir": "no_delays/tau50_H50/seed2"
+    }
+  ]
+}

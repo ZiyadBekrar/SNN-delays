@@ -1,0 +1,6 @@
+{
+  "seed": 1,
+  "mg_tau": 17.0,
+  "prediction_horizon": 30,
+  "results_dir": "./exp/MG/mackey_glass_sweep/learned_delays/tau17_H30/seed1"
+}

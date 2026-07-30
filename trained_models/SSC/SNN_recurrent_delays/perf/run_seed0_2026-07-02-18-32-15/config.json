@@ -1,0 +1,11 @@
+{
+  "seed": 0,
+  "sigma_init": 1.0,
+  "hidden_layers": [
+    256,
+    256,
+    256
+  ],
+  "recurrent_dropout_rate": 0.3,
+  "results_dir": "./exp/SSC/SNN_recurrent_delays/perf/seed0_2026-07-02-18-32-15"
+}

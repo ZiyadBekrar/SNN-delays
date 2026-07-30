@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "delrec"
+version = "1.0.0"
+description = "Learning delays in recurrent spiking neural networks"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+dependencies = [
+    "torch==2.5.1",
+    "torchvision==0.20.1",
+    # 0.0.0.0.15 was never released to PyPI, whose newest is 0.0.0.0.14 with a
+    # substantially different neuron.py. This is the upstream commit whose sources
+    # match the installed copy that produced every number here, byte for byte.
+    "spikingjelly @ git+https://github.com/fangwei123456/spikingjelly.git@d4fee3a1715bf42ce15f52fde1b1d4709d7ea25e",
+    "DCLS==0.1.1",
+    "numpy==1.26.4",
+    "pandas==2.2.3",
+    # train_test_split, for HAR's train/test partition (seeded, then cached to .npy)
+    "scikit-learn==1.6.1",
+    "matplotlib==3.10.0",
+    "scipy==1.15.3",
+    "h5py==3.11.0",
+    "tqdm==4.67.1",
+    "opt_einsum==3.4.0",
+    "prettytable==3.5.0",
+    "urllib3==2.2.1",
+]
+
+[project.optional-dependencies]
+# The fused GPU kernels. Without triton the layers fall back
+# to the pure-torch reference scan, which is numerically identical but slower.
+# Pinned to torch 2.5.1's own triton requirement: it pins triton==3.1.0 exactly on
+# Linux/x86_64, so any other pin makes the resolve impossible.
+gpu = ["triton==3.1.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["delrec*"]

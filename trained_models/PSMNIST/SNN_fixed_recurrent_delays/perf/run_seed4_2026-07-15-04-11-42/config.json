@@ -1,0 +1,8 @@
+{
+  "seed": 4,
+  "sigma_init": 0.0,
+  "time_window": 784,
+  "input_dim": 1,
+  "output_dim": 10,
+  "results_dir": "./exp/PSMNIST/SNN_fixed_recurrent_delays/perf/seed4_2026-07-15-04-11-42"
+}

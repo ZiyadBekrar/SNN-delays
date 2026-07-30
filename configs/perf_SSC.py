@@ -1,5 +1,11 @@
+"""Hyperparameters for SSC (the hyperparameter tables of the paper).
+
+Three recurrent hidden layers of 256, 150 epochs, delays drawn half-normal with
+s_init = 12 and annealed from sigma = 1.0. Recipe follows [21].
+"""
+
 from spikingjelly.activation_based import neuron, surrogate
-from src.utils import Triangle
+from delrec.utils import Triangle
 
 class Config():
     
@@ -13,10 +19,11 @@ class Config():
     
     ### General ###
     
-    epochs = 100
-    batch_size = 128
+    epochs = 150 #100
+    batch_size = 256 #128
     
     bias = True
+    use_rec_bias = False #True
     use_batch_norm = False
     
     results_dir = ''
@@ -28,7 +35,7 @@ class Config():
     input_size = 700//n_bins
     output_size = 35
     
-    recurrent_dropout_rate = 0.3
+    recurrent_dropout_rate = 0.3 #0.2 #0.3
     feedforward_dropout_rate = 0.1
     
     init_ff_weights = 'default' # 'kaiming' or 'normal' or 'default'
@@ -61,15 +68,23 @@ class Config():
     init_rec_delay = 'half_normal' # 'half_normal' or 'uniform'
     rec_delay_init_gain = 1.0
     
-    sigma_init = 10.0
-    sigma_decay = 0.95
-    
+    sigma_init = 1. #10.0
+    sigma_decay = 0.95 #0.98 #0.95
+
+    # Round the (fractional) delays to integers before each eval epoch
+    round_pos_each_epoch = True
+
+    # STE forward (only used when forward_version='triton_ste'):
+    # True  -> single rounded tap (one-hot at round(1+d))
+    # False -> 2-tap linear interpolation of the fractional delay
+    ste_round_forward = False
+
     ### Feedforward delays ###
     
-    DCLSversion = 'v1' # 'gauss' not implemented yet
+    DCLSversion = 'gauss' # 'gauss' not implemented yet
     
     kernel_count = 1
-    max_feedforward_delay = 25
+    max_feedforward_delay = 30
     max_feedforward_delay = max_feedforward_delay if max_feedforward_delay%2==1 else max_feedforward_delay+1 
     
     left_padding = max_feedforward_delay - 1
@@ -78,12 +93,14 @@ class Config():
     init_pos_a = -max_feedforward_delay//2
     init_pos_b = max_feedforward_delay//2
     
+    siginit = max_feedforward_delay//2
+    
     ### Optimization ###
     
     optim = 'adam'
     
     scheduler_weights = 'onecycle' # 'cos' or 'onecycle'
-    scheduler_pos = 'onecycle' # 'onecycle' or 'cos'
+    scheduler_pos = 'cos' #'onecycle' # 'onecycle' or 'cos'
     
     lr_w = 1e-3
     lr_positions = 5e-2

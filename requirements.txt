@@ -1,15 +1,26 @@
+# Pinned to the environment that produced the results in this repository
+# (checkpoints, results/, and every figure). Verified against the versions that
+# environment actually imports.
 DCLS==0.1.1
+h5py==3.11.0
 matplotlib==3.10.0
-nbformat==5.10.4
-pandas==1.5.3
-plotly==6.3.0
-spikingjelly==0.0.0.0.14
-torch==2.7.0
-torchvision==0.22.0
-tqdm==4.67.1
-urllib3==2.4.0
-wandb==0.21.1
-numpy==1.23.5
-opt_einsum==3.3.0
+numpy==1.26.4
+opt_einsum==3.4.0
+pandas==2.2.3
 prettytable==3.5.0
-h5py==3.12.1
+scikit-learn==1.6.1
+scipy==1.15.3
+torch==2.5.1
+torchvision==0.20.1
+tqdm==4.67.1
+urllib3==2.2.1
+
+# spikingjelly 0.0.0.0.15 was never released to PyPI, whose newest is 0.0.0.0.14
+# with a substantially different neuron.py. This is the upstream commit whose
+# sources match the installed copy that produced every number here, byte for byte.
+spikingjelly @ git+https://github.com/fangwei123456/spikingjelly.git@d4fee3a1715bf42ce15f52fde1b1d4709d7ea25e
+
+# Optional: the fused GPU kernels of Supplementary 5.4. Without it the layers
+# fall back to the pure-torch reference scan — numerically identical, slower.
+# torch 2.5.1 pins triton==3.1.0 exactly on Linux/x86_64; any other pin cannot resolve.
+triton==3.1.0

@@ -1,0 +1,7 @@
+{
+  "seed": 1,
+  "delay_std_init": 18,
+  "round_pos_each_epoch": true,
+  "sigma_init": 0.0,
+  "results_dir": "./exp/HAR/sweep_delaystd_roundpos1_20260626-102120/SNN_fixed_recurrent_delays/std18/seed1"
+}

@@ -1,0 +1,8 @@
+{
+  "acc": 96.47,
+  "loss": 0.14354528413005027,
+  "best_val": 96.65686274509804,
+  "best_epoch": 191,
+  "ckpt": "best.pth",
+  "kernel": "eventdriven"
+}

@@ -1,0 +1,6 @@
+{
+  "seed": 3,
+  "delay_weight_decay": 0.0,
+  "sigma_init": 0.0,
+  "results_dir": "./exp/AL/SNN_fixed_recurrent_delays/perf_triton/seed3_2026-07-20-14-13-58"
+}

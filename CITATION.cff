@@ -1,0 +1,57 @@
+cff-version: 1.2.0
+title: "DelRec: learning delays in recurrent spiking neural networks"
+message: "If you use this software, please cite the paper (preferred-citation below)."
+type: software
+version: 1.0.0
+authors:
+  - family-names: Queant
+    given-names: Alexandre
+    affiliation: "CerCo, CNRS UMR 5549, Toulouse, France"
+  - family-names: Rancon
+    given-names: Ulysse
+    affiliation: "CerCo, CNRS UMR 5549, Toulouse, France"
+  - family-names: Cottereau
+    given-names: "Benoit R"
+    affiliation: "CerCo, CNRS UMR 5549, Toulouse, France"
+  - family-names: Masquelier
+    given-names: Timothee
+    affiliation: "CerCo, CNRS UMR 5549, Toulouse, France"
+repository-code: "https://github.com/alexmaxad/DelRec"
+license: MIT
+preferred-citation:
+  type: article
+  title: "DelRec: learning delays in recurrent spiking neural networks"
+  year: 2025
+  authors:
+    - family-names: Queant
+      given-names: Alexandre
+      affiliation: "CerCo, CNRS UMR 5549, Toulouse, France"
+    - family-names: Rancon
+      given-names: Ulysse
+      affiliation: "CerCo, CNRS UMR 5549, Toulouse, France"
+    - family-names: Cottereau
+      given-names: "Benoit R"
+      affiliation: "CerCo, CNRS UMR 5549, Toulouse, France"
+    - family-names: Masquelier
+      given-names: Timothee
+      affiliation: "CerCo, CNRS UMR 5549, Toulouse, France"
+  doi: "10.48550/arXiv.2509.24852"
+  url: "https://arxiv.org/abs/2509.24852"
+  notes: "Preprint, arXiv:2509.24852"
+references:
+  - type: data
+    title: "DelRec: trained model checkpoints"
+    year: 2025
+    authors:
+      - family-names: Queant
+        given-names: Alexandre
+      - family-names: Rancon
+        given-names: Ulysse
+      - family-names: Cottereau
+        given-names: "Benoit R"
+      - family-names: Masquelier
+        given-names: Timothee
+    doi: "10.5281/zenodo.21704323"
+    notes: >-
+      The 691 trained checkpoints behind the paper, fetched by fetch_checkpoints.py.
+      This is the all-versions DOI and resolves to the latest deposit.

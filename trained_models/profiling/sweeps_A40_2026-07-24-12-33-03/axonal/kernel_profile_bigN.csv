@@ -1,0 +1,2 @@
+kind,sweep,value,T,B,N,D,sigma,regime,mode,time_ms,mem_mib,firing,bk
+axonal,N,512.0,250,256,512,25,1.0,fwdbwd,triton_exact,253.21676635742188,1197.62451171875,0.11655423790216446,32

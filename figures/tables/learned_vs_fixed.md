@@ -1,0 +1,10 @@
+# Learned and fixed recurrent delays on all four benchmarks
+
+Test accuracy [%], mean +/- std over 5 seeds (3 on HAR).
+
+| Delay type      | Learning | SSC          | PSMNIST      | AL           | HAR          |
+|-----------------|----------|--------------|--------------|--------------|--------------|
+| Axonal (ax.)    | Fixed    | 82.11+/-0.16 | 95.78+/-0.27 | 82.72+/-1.62 | 82.73+/-0.37 |
+| Axonal (ax.)    | Learned  | 82.42+/-0.23 | 96.32+/-0.19 | 85.74+/-1.49 | 83.53+/-0.26 |
+| Synaptic (syn.) | Fixed    | 82.09+/-0.22 | 95.90+/-0.22 | 83.74+/-1.24 | 82.89+/-0.27 |
+| Synaptic (syn.) | Learned  | 82.24+/-0.19 | 96.63+/-0.12 | 85.00+/-0.85 | 84.44+/-0.27 |
