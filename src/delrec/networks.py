@@ -12,6 +12,7 @@ the firing-rate penalty and the efficiency analyses.
 
 import torch
 import math
+from copy import copy
 
 from spikingjelly.activation_based import layer
 from DCLS.construct.modules import Dcls1d
@@ -70,7 +71,7 @@ class SNN(torch.nn.Module):
     def __init__(self, config):
         super().__init__()
         
-        assert config.dataset in ['SSC', 'PSMNIST', 'HAR', 'AL', 'MG'], "This SNN is designed for SSC, PSMNIST, HAR, AL or MG datasets."
+        assert config.dataset in ['SSC', 'PSMNIST', 'HAR', 'AL', 'MG', 'MEM'], "Unsupported SNN dataset."
         
         self.config = config
         
@@ -718,4 +719,138 @@ class SNN_recurrent_and_feedforward_delays(SNN_feedforward_delays, SNN_recurrent
                         logs[f"p_spread_std_{idx}"] = (2 * torch.sigmoid(layer.p_spread) * layer.sigma).detach().std().item()
                     
         return logs
-        
+
+
+class SNN_axonal_recurrent_and_feedforward_delays(SNN_recurrent_and_feedforward_delays):
+    """One delay per source neuron on both feedforward and recurrent pathways.
+
+    Hidden order matches the synaptic variant: delayed projection, dropout,
+    recurrent neuron, spike recorder, optional batch norm. Depthwise delay
+    filters have unit weights and no bias; the following Linear owns the weights
+    and bias. kernel_count=1 makes each channel carry exactly one delay.
+    """
+
+    recurrent_module = axonal_recdel
+    axonal_feedforward = True
+
+    def __init__(self, config):
+        torch.nn.Module.__init__(self)
+        if config.kernel_count != 1:
+            raise ValueError("These paired models require kernel_count=1 (one delay per axon/synapse).")
+        self.config = config
+        modules = []
+        dim = config.input_size
+        for idx, width in enumerate(config.hidden_layers):
+            modules.extend(self._projection(dim, width, not (idx == 0 and config.no_delay_in_first_layer)))
+            modules.append(layer.Dropout(config.feedforward_dropout_rate, step_mode='m'))
+            modules.append(self.recurrent_module(config, width, config.neuron_module))
+            modules.append(spike_registrator())
+            if config.use_batch_norm:
+                modules.append(modified_batchnorm(width, step_mode='m'))
+            dim = width
+        modules.extend(self._projection(dim, config.output_size, not config.no_delay_in_last_layer))
+        self.layers = torch.nn.Sequential(*modules)
+        self.init_weights()
+
+    def _projection(self, inputs, outputs, delayed):
+        if not delayed:
+            return [torch.nn.Linear(inputs, outputs, bias=self.config.bias)]
+        if not self.axonal_feedforward:
+            return [dcls_module(self.config, inputs, outputs, groups=1)]
+        delay_config = copy(self.config)
+        delay_config.bias = False
+        return [dcls_module(delay_config, inputs, inputs, groups=inputs),
+                torch.nn.Linear(inputs, outputs, bias=self.config.bias)]
+
+    def init_weights(self):
+        SNN_feedforward_delays.init_weights(self)
+        if self.axonal_feedforward:
+            for module in self.layers:
+                if isinstance(module, dcls_module):
+                    torch.nn.init.ones_(module.weight)
+                    module.weight.requires_grad_(False)
+
+
+class SNN_synaptic_recurrent_and_feedforward_delays(SNN_axonal_recurrent_and_feedforward_delays):
+    """One independently learned delay per feedforward and recurrent connection."""
+
+    recurrent_module = synaptic_recdel
+    axonal_feedforward = False
+
+
+class _AxonalWithFixedOffsets(torch.nn.Module):
+    """Broadcast a learned axonal parameter, then add saved per-synapse offsets."""
+
+    def __init__(self, offsets, position_shift=0.0, position_sign=1.0):
+        super().__init__()
+        self.register_buffer('offsets', offsets)
+        self.position_shift = position_shift
+        self.position_sign = position_sign
+
+    def forward(self, axonal):
+        return axonal + self.position_shift + self.position_sign * self.offsets
+
+
+def learned_delay_parameter(module, name):
+    """Return the leaf parameter, including for shared/parametrized delays."""
+    from torch.nn.utils import parametrize
+    if parametrize.is_parametrized(module, name):
+        return getattr(module.parametrizations, name).original
+    return getattr(module, name)
+
+
+class SNN_hybrid_recurrent_and_feedforward_delays(SNN_synaptic_recurrent_and_feedforward_delays):
+    """Learned axonal delays + fixed random synaptic offsets on both pathways.
+
+    Effective delay(i,j) = learned_axonal_delay(j) + fixed_offset(i,j).
+    Offsets are drawn once as integer time steps and saved as buffers. Dense
+    synaptic computation is used, but only one delay per source is optimized.
+    """
+
+    def __init__(self, config):
+        from torch.nn.utils import parametrize
+        super().__init__(config)
+        maximum = getattr(config, 'hybrid_max_synaptic_delay', 4)
+        if int(maximum) != maximum or maximum < 0:
+            raise ValueError('hybrid_max_synaptic_delay must be a nonnegative integer')
+        maximum = int(maximum)
+        generator = torch.Generator().manual_seed(getattr(config, 'hybrid_delay_seed', 123))
+        self.base_position_bound = config.max_feedforward_delay // 2
+        for module in self.layers:
+            if isinstance(module, dcls_module):
+                offsets = torch.randint(maximum + 1, module.P.shape, generator=generator).float()
+                base = module.P[:, :1].detach().clone()
+                # DCLS position increases toward the present: positive transmission
+                # delay subtracts from P. Extend both sides of the kernel, then
+                # shift the center so zero offsets preserve the original lag.
+                module.dilated_kernel_size = (config.max_feedforward_delay + 2 * maximum,)
+                module.left_padding += 2 * maximum
+                module.DCK = type(module.DCK)(module.out_channels, module.in_channels,
+                    module.groups, module.kernel_count, module.dilated_kernel_size, module.version)
+                parametrize.register_parametrization(module, 'P',
+                    _AxonalWithFixedOffsets(offsets, maximum, -1.0), unsafe=True)
+                module.parametrizations.P.original = torch.nn.Parameter(base)
+            elif isinstance(module, axonal_recdel):
+                offsets = torch.randint(maximum + 1, module.recurrent_delays.shape, generator=generator).float()
+                base = module.recurrent_delays[0].detach().clone()
+                parametrize.register_parametrization(module, 'recurrent_delays',
+                    _AxonalWithFixedOffsets(offsets), unsafe=True)
+                module.parametrizations.recurrent_delays.original = torch.nn.Parameter(base)
+                module.forward_version = 'v2'
+
+    def clamp_delays(self):
+        with torch.no_grad():
+            for module in self.layers:
+                if isinstance(module, dcls_module):
+                    learned_delay_parameter(module, 'P').clamp_(-self.base_position_bound, self.base_position_bound)
+                elif isinstance(module, axonal_recdel):
+                    learned_delay_parameter(module, 'recurrent_delays').clamp_(min=0)
+
+    def round_pos(self):
+        with torch.no_grad():
+            for module in self.layers:
+                if isinstance(module, dcls_module):
+                    learned_delay_parameter(module, 'P').round_()
+                elif isinstance(module, axonal_recdel):
+                    learned_delay_parameter(module, 'recurrent_delays').round_()
+        self.clamp_delays()

@@ -136,6 +136,9 @@ DelRec/
 
 How those pieces fit together: [docs/architecture.md](docs/architecture.md).
 
+For training-set-only random-label memorization with recurrent and feedforward
+delays, see [docs/memorization.md](docs/memorization.md).
+
 ## Citation
 
 ```bibtex

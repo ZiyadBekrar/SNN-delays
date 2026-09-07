@@ -1,5 +1,5 @@
 # Datasets and generated artifacts
-Datasets/
+/Datasets/
 # figures/ holds the generated figures and tables and IS committed:
 # they are part of what this repository publishes.
 

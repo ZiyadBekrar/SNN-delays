@@ -23,4 +23,4 @@ spikingjelly @ git+https://github.com/fangwei123456/spikingjelly.git@d4fee3a1715
 # Optional: the fused GPU kernels of Supplementary 5.4. Without it the layers
 # fall back to the pure-torch reference scan — numerically identical, slower.
 # torch 2.5.1 pins triton==3.1.0 exactly on Linux/x86_64; any other pin cannot resolve.
-triton==3.1.0
+#triton==3.1.0
