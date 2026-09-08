@@ -16,7 +16,7 @@ class Config:
     num_samples = 128
     input_size = 16
     time_window = 32
-    output_size = 4
+    output_size = 8
     input_gain = 1.0
     hidden_layers = [64]
     epochs = 200
@@ -56,6 +56,8 @@ class Config:
     use_sig_p = False
     sigma_init = 0.0
     sigma_decay = 0.95
+
+    #Hybrid delays configuration
     hybrid_max_synaptic_delay = 4  # fixed integer offsets in [0, 4] on both pathways
     hybrid_delay_seed = 123  # independent of dataset and model seed
     round_delays = False
@@ -70,7 +72,7 @@ class Config:
     init_pos_b = max_feedforward_delay // 2
     siginit = 1.0  # scheduled to 0.23 in the first half of training
 
-    lr_w = 0.01
-    lr_positions = 0.01
+    lr_w = 0.005
+    lr_positions = 0.08
     weight_decay = 0.0
     grad_clip = 1.0

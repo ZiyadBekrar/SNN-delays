@@ -722,7 +722,7 @@ class SNN_recurrent_and_feedforward_delays(SNN_feedforward_delays, SNN_recurrent
 
 
 class SNN_axonal_recurrent_and_feedforward_delays(SNN_recurrent_and_feedforward_delays):
-    """One delay per source neuron on both feedforward and recurrent pathways.
+    """One delay per source neuron on both feedforward and recurrent pathways (axonal delays).
 
     Hidden order matches the synaptic variant: delayed projection, dropout,
     recurrent neuron, spike recorder, optional batch norm. Depthwise delay
@@ -758,7 +758,7 @@ class SNN_axonal_recurrent_and_feedforward_delays(SNN_recurrent_and_feedforward_
         if not self.axonal_feedforward:
             return [dcls_module(self.config, inputs, outputs, groups=1)]
         delay_config = copy(self.config)
-        delay_config.bias = False
+        delay_config.bias = False #no bias in the model
         return [dcls_module(delay_config, inputs, inputs, groups=inputs),
                 torch.nn.Linear(inputs, outputs, bias=self.config.bias)]
 
