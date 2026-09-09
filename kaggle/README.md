@@ -88,9 +88,16 @@ kaggle kernels output ziyadcs/snn-delays-gpu -p ./out   # same files as the zip 
   per run. Rapid pushes queue on Kaggle; `concurrency` in the workflow only
   cancels the *waiting* Action, not a kernel already running.
 - Needs a **phone-verified** Kaggle account (for `enable_internet`). Done.
-- The kernel installs `DCLS`, `spikingjelly` and two small extras; it uses
-  Kaggle's preinstalled CUDA `torch` and never reinstalls it.
+- The kernel reinstalls **torch 2.5.1 / torchvision 0.20.1** (cu121). A pushed
+  GPU kernel gets a **Tesla P100 (sm_60)**, and Kaggle's stock torch (2.10+cu128)
+  dropped Pascal kernels, so its CUDA launches fail with *"no kernel image is
+  available for execution on the device"* even though `torch.cuda.is_available()`
+  is `True`. 2.5.1 is also the version `requirements.txt` pins. There is no
+  kernel-metadata field to request a T4 instead of the P100.
+- It then installs `DCLS`, `spikingjelly` and two small extras.
 - These models are tiny (64 hidden units, 256 samples); the GPU is not
-  necessarily faster than CPU here, but the run is short either way.
+  necessarily faster than CPU here, but the run is short either way. To skip the
+  GPU entirely, drop `enable_gpu` in `kernel-metadata.json` and the `--device
+  cuda` flag / GPU check in `run.py`.
 - Run by hand (see "One-time setup" for local auth): `cd kaggle && kaggle kernels push -p .`
   - with `run.py`'s `COMMIT` left as the placeholder it uses the default branch.

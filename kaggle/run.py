@@ -30,9 +30,15 @@ def main():
         sh("git", "-C", CHECKOUT, "checkout", "--detach", COMMIT)
     sh("git", "-C", CHECKOUT, "log", "-1", "--oneline")
 
-    # 2. Dependencies. Kaggle's image already carries a CUDA torch/torchvision and
-    #    the scientific stack (numpy, pandas, scipy, matplotlib, h5py, sklearn,
-    #    tqdm). Install only what it lacks, and never let pip touch torch.
+    # 2. Dependencies. Kaggle's image ships a very new torch (2.10+cu128) whose
+    #    binaries dropped Pascal (sm_60) kernels, and the GPU a pushed kernel is
+    #    given is a Tesla P100 (sm_60): every CUDA launch then fails with "no
+    #    kernel image is available for execution on the device". Pin the repo's
+    #    own torch 2.5.1 / torchvision 0.20.1 - its cu121 wheels include sm_60,
+    #    and this is the environment requirements.txt already specifies.
+    sh(sys.executable, "-m", "pip", "install", "-q",
+       "torch==2.5.1", "torchvision==0.20.1",
+       "--index-url", "https://download.pytorch.org/whl/cu121")
     sh(sys.executable, "-m", "pip", "install", "-q",
        "DCLS==0.1.1",
        "spikingjelly @ git+https://github.com/fangwei123456/spikingjelly.git"
@@ -40,13 +46,20 @@ def main():
        "opt_einsum", "prettytable")
     sh(sys.executable, "-m", "pip", "install", "-q", "--no-deps", "-e", CHECKOUT)
 
-    # 3. A GPU must actually be attached.
+    # 3. A usable GPU must actually be attached - and torch must have kernels for
+    #    it. Do a real launch so a mismatch fails here, with a clear message,
+    #    instead of mid-experiment.
     import torch
     print("torch", torch.__version__, "| CUDA:", torch.cuda.is_available(),
           "|", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "no device",
           flush=True)
     if not torch.cuda.is_available():
         raise SystemExit("No CUDA device - enable the GPU accelerator on this kernel.")
+    try:
+        (torch.ones(16, device="cuda") * 2).sum().item()
+    except Exception as exc:
+        raise SystemExit(f"GPU present but unusable: {exc}. torch {torch.__version__} "
+                         f"has no kernels for {torch.cuda.get_device_name(0)}.")
 
     # 4. Run the comparison on the GPU.
     env = dict(os.environ, MPLBACKEND="Agg")
