@@ -85,6 +85,14 @@ def run(config, device, out=None, model=None):
     measure_loader = DataLoader(dataset, batch_size=config.batch_size, shuffle=False,
                                 num_workers=config.num_workers)
     model = (getattr(networks, config.model)(config) if model is None else model).to(device)
+    # DCLS's ConstructKernel caches index/limit tensors on the device of its first
+    # forward and never follows a later .to(). compare_mem_delays.py probes each
+    # model on CPU before this move, which would pin those tensors to CPU; clear
+    # the cache so the next forward rebuilds them on `device`.
+    for module in model.modules():
+        dck = getattr(module, "DCK", None)
+        if dck is not None:
+            dck.IDX = dck.lim = None
     optimizer = make_optimizer(model, config)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config.epochs)
     run_dir = out or ROOT / "exp" / "MEM" / config.model / (

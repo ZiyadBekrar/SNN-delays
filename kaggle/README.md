@@ -94,7 +94,14 @@ kaggle kernels output ziyadcs/snn-delays-gpu -p ./out   # same files as the zip 
   available for execution on the device"* even though `torch.cuda.is_available()`
   is `True`. 2.5.1 is also the version `requirements.txt` pins. There is no
   kernel-metadata field to request a T4 instead of the P100.
-- It then installs `DCLS`, `spikingjelly` and two small extras.
+- It then installs `DCLS`, `spikingjelly` and two small extras. The pip warning
+  `torchaudio 2.10.0 requires torch==2.10.0` is harmless - nothing here imports
+  torchaudio.
+- `train_mem.run()` clears DCLS's `ConstructKernel` index/limit cache after
+  `.to(device)`: DCLS pins those tensors to the device of the first forward and
+  never follows a later move, and `compare_mem_delays.py` probes each model on
+  CPU before the GPU move (would otherwise crash with a cpu/cuda device mismatch
+  in `forward_vgauss`).
 - These models are tiny (64 hidden units, 256 samples); the GPU is not
   necessarily faster than CPU here, but the run is short either way. To skip the
   GPU entirely, drop `enable_gpu` in `kernel-metadata.json` and the `--device
