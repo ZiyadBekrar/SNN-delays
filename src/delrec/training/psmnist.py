@@ -10,7 +10,7 @@ import torch
 import torch.nn.functional as F
 
 from delrec.delay_layers import axonal_recdel
-from delrec.networks import dcls_module, modified_batchnorm, spike_registrator
+from delrec.networks import dcls_module, modified_batchnorm, spike_registrator, learned_delay_parameter
 from delrec.utils import *
 
 def get_spike_cost(model, normalize="NT"):
@@ -172,7 +172,7 @@ def init_optim_sche(model, config):
             weights.append(m.weight)
             if config.bias:
                 weights.append(m.bias)
-            positions.append(m.P)
+            positions.append(learned_delay_parameter(m, 'P'))
             
         elif isinstance(m, modified_batchnorm):
             weights_norm.append(m.weight)

@@ -506,7 +506,9 @@ class SNN_feedforward_delays(SNN):
                 ff_w = layer.weight
                 ff_w_mean = torch.abs(ff_w).mean()
                 ff_w_grad_max = ff_w.grad.abs().max().item() if ff_w.grad is not None else 0.0
-                ff_d_grad_max = layer.P.grad.abs().max().item() if layer.P.grad is not None else 0.0
+                # With a hybrid parametrization the leaf is P.original, not P.
+                ff_P = learned_delay_parameter(layer, 'P')
+                ff_d_grad_max = ff_P.grad.abs().max().item() if ff_P.grad is not None else 0.0
 
                 logs.update({
                     f'feedforward_dcls_w_{idx}': ff_w_mean,
@@ -518,29 +520,38 @@ class SNN_feedforward_delays(SNN):
 
 class SNN_axonal_feedforward_delays(SNN_feedforward_delays):
     def __init__(self, config):
-        super().__init__(config)  
+        super().__init__(config)
 
         self.config = config
-        
+
+        # The depthwise delay conv only time-shifts each source channel; it must
+        # not add current. A bias here is one constant per source neuron applied
+        # at every timestep, ahead of the hidden Linear, so it fans out through
+        # that Linear and is then integrated by the LIF over the whole sequence -
+        # a large DC term that swings the hidden neurons between dead and
+        # saturated and stalls training. Keep bias only on the trainable Linear.
+        # (SNN_axonal_recurrent_and_feedforward_delays already does this in
+        # _projection; this line just applies the same rule here.)
+        delay_config = copy(config)
+        delay_config.bias = False
+
         layers = []
         dim_buffer = config.input_size
-        
+
         for idx, layer_dim in enumerate(config.hidden_layers):
-            
-            print(idx, layer_dim, dim_buffer)
-            
+
             if config.no_delay_in_first_layer and idx == 0:
                 layers.append(torch.nn.Linear(dim_buffer, layer_dim, bias=config.bias))
             else:
                 layers.append(
                     dcls_module(
-                        config,
+                        delay_config,
                         in_channels = dim_buffer,
                         out_channels = dim_buffer,
                         groups = dim_buffer,
                     )
                     ) # (T, B, N_in) -> (T, B, N_hidden)
-                layers.append(torch.nn.Linear(dim_buffer, layer_dim, bias=config.bias)) 
+                layers.append(torch.nn.Linear(dim_buffer, layer_dim, bias=config.bias))
             dim_buffer = layer_dim
             
             if config.use_batch_norm:
@@ -567,17 +578,17 @@ class SNN_axonal_feedforward_delays(SNN_feedforward_delays):
             layers.append(torch.nn.Linear(dim_buffer, config.output_size, bias=config.bias))
         else:
                 layers.append(dcls_module(
-                        config,
+                        delay_config,
                         in_channels = dim_buffer,
                         out_channels = dim_buffer,
                         groups = dim_buffer,
                     ))
-                layers.append(torch.nn.Linear(dim_buffer, config.output_size, bias=config.bias)) 
-            
+                layers.append(torch.nn.Linear(dim_buffer, config.output_size, bias=config.bias))
+
         self.layers = torch.nn.Sequential(*layers)
-        
+
         self.init_weights()
-    
+
     def init_weights(self):
         for m in self.layers:
             # Feedforward weights init
@@ -592,12 +603,12 @@ class SNN_axonal_feedforward_delays(SNN_feedforward_delays):
             if isinstance(m, dcls_module):
                 torch.nn.init.constant_(m.weight, 1.0)
                 m.weight.requires_grad = False
-                        
+
             # Feedforward delays init
             if isinstance(m, dcls_module):
                 torch.nn.init.uniform_(m.P, a = self.config.init_pos_a, b = self.config.init_pos_b)
                 m.clamp_parameters()
-                
+
                 if self.config.DCLSversion == 'gauss':
                     torch.nn.init.constant_(m.SIG, self.config.siginit)
                     m.SIG.requires_grad = False
@@ -854,3 +865,96 @@ class SNN_hybrid_recurrent_and_feedforward_delays(SNN_synaptic_recurrent_and_fee
                 elif isinstance(module, axonal_recdel):
                     learned_delay_parameter(module, 'recurrent_delays').round_()
         self.clamp_delays()
+
+
+class SNN_feedforward_hybrid(SNN_feedforward_delays):
+    """Feedforward-only hybrid delays: learned axonal position + fixed random synaptic offset.
+
+    Effective feedforward delay d(i, j) = d_j + delta_ij, where j indexes the
+    presynaptic (source) neuron. d_j is a single learned axonal delay per source,
+    shared across all of its targets (as in ``SNN_axonal_feedforward_delays``);
+    delta_ij is a per-synapse integer offset drawn once and stored as a buffer,
+    never trained. The result keeps the per-synapse delay resolution of
+    ``SNN_feedforward_delays`` while optimizing only the axonal parameter count.
+
+    There is no recurrence: the layer stack is exactly ``SNN_feedforward_delays``'
+    (dense DCLS feedforward projections, LIF neurons, membrane readout). Only the
+    delay parametrization of each ``dcls_module`` changes.
+
+    Config knobs (shared with the recurrent hybrid):
+      hybrid_max_synaptic_delay : inclusive upper bound on delta_ij, integer >= 0
+                                  (default 4).
+      hybrid_delay_seed         : RNG seed for the fixed offsets (default 123).
+    """
+
+    def __init__(self, config):
+        from torch.nn.utils import parametrize
+        super().__init__(config)
+
+        maximum = getattr(config, 'hybrid_max_synaptic_delay', 4)
+        if int(maximum) != maximum or maximum < 0:
+            raise ValueError('hybrid_max_synaptic_delay must be a nonnegative integer')
+        maximum = int(maximum)
+        generator = torch.Generator().manual_seed(getattr(config, 'hybrid_delay_seed', 123))
+        self.base_position_bound = config.max_feedforward_delay // 2
+
+        for module in self.layers:
+            if isinstance(module, dcls_module):
+                # P has shape (1, out_channels, in_channels, kernel_count). Keep one
+                # learned position per source neuron (slice the target axis to 1) and
+                # add a fixed offset per (target, source) pair.
+                offsets = torch.randint(maximum + 1, module.P.shape, generator=generator).float()
+                base = module.P[:, :1].detach().clone()
+                # DCLS position increases toward the present: a positive transmission
+                # delay subtracts from P. Widen the kernel on both sides and shift the
+                # center so that zero offsets reproduce the original lag.
+                module.dilated_kernel_size = (config.max_feedforward_delay + 2 * maximum,)
+                module.left_padding += 2 * maximum
+                module.DCK = type(module.DCK)(module.out_channels, module.in_channels,
+                    module.groups, module.kernel_count, module.dilated_kernel_size, module.version)
+                parametrize.register_parametrization(module, 'P',
+                    _AxonalWithFixedOffsets(offsets, maximum, -1.0), unsafe=True)
+                module.parametrizations.P.original = torch.nn.Parameter(base)
+
+    def clamp_delays(self, train=True):
+        with torch.no_grad():
+            for module in self.layers:
+                if isinstance(module, dcls_module):
+                    learned_delay_parameter(module, 'P').clamp_(
+                        -self.base_position_bound, self.base_position_bound)
+
+    def round_pos(self):
+        with torch.no_grad():
+            for module in self.layers:
+                if isinstance(module, dcls_module):
+                    learned_delay_parameter(module, 'P').round_()
+        self.clamp_delays()
+
+
+class SNN_recurrent_hybrid(SNN_hybrid_recurrent_and_feedforward_delays):
+    """Recurrent-only hybrid delays: learned axonal position + fixed random synaptic offset.
+
+    Effective recurrent delay d(i, j) = d_j + delta_ij. d_j is a single learned
+    axonal delay per neuron, shared across all of its recurrent connections (as in
+    ``SNN_recurrent_delays``); delta_ij is a per-synapse integer offset drawn once
+    and stored as a buffer, never trained. The result keeps the per-synapse delay
+    resolution of ``SNN_synaptic_recurrent_delays`` while optimizing only the
+    axonal parameter count.
+
+    This is the recurrent-only analogue of ``SNN_feedforward_hybrid``: it is
+    exactly ``SNN_hybrid_recurrent_and_feedforward_delays`` with the feedforward
+    delay pathway removed. ``_projection`` returns a plain trainable Linear for
+    every layer, so no ``dcls_module`` is built and the inherited ``__init__`` /
+    ``clamp_delays`` / ``round_pos`` only ever touch the recurrent modules.
+
+    Config knobs (shared with the other hybrids):
+      hybrid_max_synaptic_delay : inclusive upper bound on delta_ij, integer >= 0
+                                  (default 4).
+      hybrid_delay_seed         : RNG seed for the fixed offsets (default 123).
+    """
+
+    axonal_feedforward = False
+
+    def _projection(self, inputs, outputs, delayed):
+        # No feedforward delays: ignore `delayed`, always a trainable Linear.
+        return [torch.nn.Linear(inputs, outputs, bias=self.config.bias)]
