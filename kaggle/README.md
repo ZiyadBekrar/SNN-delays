@@ -8,29 +8,32 @@ and run it on a GPU. The kernel clones the repo at the pushed commit and runs
 
 ## One-time setup
 
-1. Kaggle: https://www.kaggle.com/settings -> API -> **Create New Token** ->
-   downloads `kaggle.json` = `{"username": "...", "key": "..."}`.
+1. Kaggle: https://www.kaggle.com/settings -> API -> **Create New Token**. Kaggle
+   now issues a single access token that looks like `KGAT_625ffa74...` (the old
+   `kaggle.json` with `username` + 32-char `key` is gone). Copy the **whole
+   string**, `KGAT_` prefix included.
 2. GitHub repo -> **Settings -> Secrets and variables -> Actions -> New repository secret**
-   (must be *Repository* secrets on `ZiyadBekrar/SNN-delays` itself, not
-   Environment/Dependabot secrets):
-   - `KAGGLE_USERNAME` = `ziyadcs`
-   - `KAGGLE_KEY` = the `key` value from `kaggle.json`
+   (a *Repository* secret on `ZiyadBekrar/SNN-delays` itself, not an
+   Environment/Dependabot secret):
+   - `KAGGLE_API_TOKEN` = the full `KGAT_...` string
 3. Push. First run creates the kernel; later pushes add versions.
 
-If the **Push kernel** step fails with *"Authentication required to call the
-Kaggle API"*, the secrets above are missing or misnamed - an unset
-`${{ secrets.X }}` silently expands to an empty string. The workflow now checks
-for this and fails early with an explicit message.
+Auth failures:
 
-The workflow pins `kaggle==1.6.17`: the newer Kaggle CLI defaults to an
-interactive OAuth login (`kaggle auth login`) that cannot run in CI.
+- *"Authentication required to call the Kaggle API"* - `KAGGLE_API_TOKEN` is
+  missing or misnamed; an unset `${{ secrets.X }}` silently expands to `""`. The
+  **Configure Kaggle auth** step now fails early with an explicit message.
+- *"401 - Unauthorized"* - the secret exists but the value is wrong: a **stale
+  token** (clicking *Create New Token* invalidates every earlier one), or a quote
+  / trailing newline pasted into the secret. The **Verify Kaggle auth** step
+  isolates this; **Configure Kaggle auth** prints the token length and prefix
+  (must start `KGAT_`).
 
 Run it locally instead:
 
 ```bash
-pip install "kaggle==1.6.17"
-mkdir -p ~/.kaggle && mv ~/Downloads/kaggle.json ~/.kaggle/ && chmod 600 ~/.kaggle/kaggle.json
-# or:  export KAGGLE_USERNAME=ziyadcs KAGGLE_KEY=<key>
+pip install --upgrade kaggle
+export KAGGLE_API_TOKEN=KGAT_...          # or: mkdir -p ~/.kaggle && printf %s "$KAGGLE_API_TOKEN" > ~/.kaggle/access_token
 cd kaggle && kaggle kernels push -p .
 ```
 

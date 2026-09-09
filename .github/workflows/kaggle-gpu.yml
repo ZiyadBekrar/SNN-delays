@@ -1,7 +1,6 @@
 # On every push, run experiments/compare_mem_delays.py on a Kaggle GPU kernel and
-# wait for it. Needs two repo secrets (Settings -> Secrets and variables -> Actions):
-#   KAGGLE_USERNAME = ziyadcs
-#   KAGGLE_KEY      = token from https://www.kaggle.com/settings -> "Create New Token"
+# wait for it. Needs ONE repo secret (Settings -> Secrets and variables -> Actions):
+#   KAGGLE_API_TOKEN = the "KGAT_..." token from https://www.kaggle.com/settings -> API
 name: kaggle-gpu
 
 on: push
@@ -18,6 +17,7 @@ jobs:
     timeout-minutes: 120
     env:
       KERNEL: ziyadcs/snn-delays-gpu
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -25,25 +25,34 @@ jobs:
         with:
           python-version: "3.11"
 
-      # Pin the classic CLI: the newer Kaggle CLI defaults to interactive OAuth
-      # (`kaggle auth login`) and does not use KAGGLE_USERNAME / KAGGLE_KEY the
-      # same way, which cannot work in CI.
       - name: Install Kaggle CLI
-        run: pip install "kaggle==1.6.17"
+        run: pip install --upgrade kaggle
 
-      - name: Write Kaggle credentials
-        env:
-          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      - name: Configure Kaggle auth
         run: |
-          if [ -z "$KAGGLE_USERNAME" ] || [ -z "$KAGGLE_KEY" ]; then
-            echo "::error::Set the KAGGLE_USERNAME and KAGGLE_KEY repository secrets" \
-                 "(Settings -> Secrets and variables -> Actions)."
+          token="$(printf '%s' "$KAGGLE_API_TOKEN" | tr -d '[:space:]')"
+          if [ -z "$token" ]; then
+            echo "::error::Set the KAGGLE_API_TOKEN repository secret to the 'KGAT_...'" \
+                 "token from kaggle.com/settings -> API (Settings -> Secrets and variables -> Actions)."
             exit 1
           fi
+          echo "token length ${#token}, prefix ${token%%_*}_ (expect KGAT_)"
           mkdir -p ~/.kaggle
-          printf '{"username":"%s","key":"%s"}' "$KAGGLE_USERNAME" "$KAGGLE_KEY" > ~/.kaggle/kaggle.json
-          chmod 600 ~/.kaggle/kaggle.json
+          printf '%s' "$token" > ~/.kaggle/access_token   # some CLI builds read only the file
+          chmod 600 ~/.kaggle/access_token
+          # Re-export the cleaned value for every later step.
+          echo "KAGGLE_API_TOKEN=$token" >> "$GITHUB_ENV"
+
+      - name: Verify Kaggle auth
+        run: |
+          if ! kaggle kernels list --mine >/dev/null 2>err.txt; then
+            echo "::error::Kaggle rejected the token. Regenerate it at kaggle.com/settings ->"
+            echo "::error::API -> Create New Token, then paste the full 'KGAT_...' string"
+            echo "::error::(no quotes, no trailing newline) into the KAGGLE_API_TOKEN secret."
+            cat err.txt
+            exit 1
+          fi
+          echo "Kaggle auth OK"
 
       - name: Pin the kernel to this commit
         run: sed -i "s|__COMMIT_SHA__|${GITHUB_SHA}|" kaggle/run.py
