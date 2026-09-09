@@ -1,0 +1,68 @@
+# On every push, run experiments/compare_mem_delays.py on a Kaggle GPU kernel and
+# wait for it. Needs two repo secrets (Settings -> Secrets and variables -> Actions):
+#   KAGGLE_USERNAME = ziyadcs
+#   KAGGLE_KEY      = token from https://www.kaggle.com/settings -> "Create New Token"
+name: kaggle-gpu
+
+on: push
+
+# One Kaggle run at a time; a newer push cancels an in-flight wait (the kernel
+# already running on Kaggle finishes on its own).
+concurrency:
+  group: kaggle-gpu
+  cancel-in-progress: true
+
+jobs:
+  run-on-kaggle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      KERNEL: ziyadcs/snn-delays-gpu
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Kaggle CLI
+        run: pip install --upgrade kaggle
+
+      - name: Pin the kernel to this commit
+        run: sed -i "s|__COMMIT_SHA__|${GITHUB_SHA}|" kaggle/run.py
+
+      - name: Push kernel and start the GPU run
+        run: kaggle kernels push -p kaggle
+
+      - name: Wait for the kernel to finish
+        run: |
+          sleep 25                       # let Kaggle enqueue the new version
+          for i in $(seq 1 100); do
+            sleep 40
+            status="$(kaggle kernels status "$KERNEL" 2>/dev/null | tr -d '\r')"
+            echo "[$i] $status"
+            case "$status" in
+              *complete*)        exit 0 ;;
+              *error*|*cancel*)   echo "kernel failed"; exit 1 ;;
+            esac
+          done
+          echo "timed out waiting for the kernel"; exit 1
+
+      - name: Download kernel output
+        if: always()
+        run: kaggle kernels output "$KERNEL" -p kaggle-output || true
+
+      - name: Show results
+        if: always()
+        run: |
+          echo "::group::kernel log"; cat kaggle-output/*.log 2>/dev/null || true; echo "::endgroup::"
+          cat kaggle-output/delay_comparison/comparison.json 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kaggle-output
+          path: kaggle-output
+          if-no-files-found: ignore
