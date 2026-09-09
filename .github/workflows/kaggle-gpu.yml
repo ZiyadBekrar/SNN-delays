@@ -17,8 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
-      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
       KERNEL: ziyadcs/snn-delays-gpu
     steps:
       - uses: actions/checkout@v4
@@ -27,8 +25,25 @@ jobs:
         with:
           python-version: "3.11"
 
+      # Pin the classic CLI: the newer Kaggle CLI defaults to interactive OAuth
+      # (`kaggle auth login`) and does not use KAGGLE_USERNAME / KAGGLE_KEY the
+      # same way, which cannot work in CI.
       - name: Install Kaggle CLI
-        run: pip install --upgrade kaggle
+        run: pip install "kaggle==1.6.17"
+
+      - name: Write Kaggle credentials
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: |
+          if [ -z "$KAGGLE_USERNAME" ] || [ -z "$KAGGLE_KEY" ]; then
+            echo "::error::Set the KAGGLE_USERNAME and KAGGLE_KEY repository secrets" \
+                 "(Settings -> Secrets and variables -> Actions)."
+            exit 1
+          fi
+          mkdir -p ~/.kaggle
+          printf '{"username":"%s","key":"%s"}' "$KAGGLE_USERNAME" "$KAGGLE_KEY" > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
 
       - name: Pin the kernel to this commit
         run: sed -i "s|__COMMIT_SHA__|${GITHUB_SHA}|" kaggle/run.py
