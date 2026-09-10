@@ -13,14 +13,14 @@ class Config:
     seed = 0
     dataset_seed = 0
     task_type = "temporal"
-    num_samples = 5000
+    num_samples = 4608
     input_size = 16
     time_window = 32
     output_size = 4
     input_gain = 1.0
     hidden_layers = [64]
-    epochs = 3000
-    batch_size = 32
+    epochs = 2000
+    batch_size = 256
     num_workers = 0
     cpu_threads = 1
     readout = "mean"  # mean, sum, or last temporal output
