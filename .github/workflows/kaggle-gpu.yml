@@ -1,6 +1,12 @@
 # On every push, run experiments/compare_mem_delays.py on a Kaggle GPU kernel and
 # wait for it. Needs ONE repo secret (Settings -> Secrets and variables -> Actions):
 #   KAGGLE_API_TOKEN = the "KGAT_..." token from https://www.kaggle.com/settings -> API
+#
+# Kill switch: set the repository variable KAGGLE_GPU to "false" and pushes stop
+# triggering the Kaggle run (any other value, or unset, keeps it on).
+#   gh variable set KAGGLE_GPU --body false   # disable
+#   gh variable set KAGGLE_GPU --body true    # re-enable
+# or Settings -> Secrets and variables -> Actions -> Variables.
 name: kaggle-gpu
 
 on: push
@@ -13,6 +19,8 @@ concurrency:
 
 jobs:
   run-on-kaggle:
+    # Kill switch: skip the whole job when the repo variable KAGGLE_GPU is "false".
+    if: vars.KAGGLE_GPU != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:

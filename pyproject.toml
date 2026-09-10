@@ -40,3 +40,7 @@ gpu = ["triton==3.1.0"]
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["delrec*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "src"]
