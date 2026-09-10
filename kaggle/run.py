@@ -61,7 +61,13 @@ def main():
         raise SystemExit(f"GPU present but unusable: {exc}. torch {torch.__version__} "
                          f"has no kernels for {torch.cuda.get_device_name(0)}.")
 
-    # 4. Run the comparison on the GPU.
+    # 4. The hybrid delay layers use a fused Triton path on CUDA. Prove it matches
+    #    the pure-torch reference (forward + every gradient) before trusting the
+    #    numbers below - a non-zero exit here aborts the run.
+    sh(sys.executable, os.path.join(CHECKOUT, "experiments", "check_hybrid_kernel.py"),
+       "--device", "cuda")
+
+    # 5. Run the comparison on the GPU.
     env = dict(os.environ, MPLBACKEND="Agg")
     sh(sys.executable, os.path.join(CHECKOUT, "experiments", "compare_mem_delays.py"),
        "--device", "cuda", "--out", RESULTS, env=env)
