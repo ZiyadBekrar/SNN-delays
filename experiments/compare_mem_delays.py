@@ -1,14 +1,13 @@
-"""Delay-parametrization x pathway memorization experiment (3 x 3).
+"""Delay-parametrization x pathway memorization experiment (3 x 2).
 
-All measurements use training data. Nine models, each a delay parametrization
-(axonal / synaptic / hybrid) on a pathway (feedforward only / recurrent only /
-both):
+All measurements use training data. Six models, each a delay parametrization
+(axonal / synaptic / hybrid) on a pathway (feedforward only / recurrent only):
 
   axonal    one learned delay per source neuron, shared by its connections
   synaptic  one learned delay per connection
   hybrid    learned axonal delay + a fixed random per-synapse integer offset
 
-All nine are seeded from ONE global reference: a both-pathways axonal master is
+All six are seeded from ONE global reference: a both-pathways axonal master is
 built once, and its feedforward weights/biases, feedforward axonal delays,
 recurrent weights/biases and recurrent axonal delays are injected into every
 model. Within each pathway group the axonal and synaptic models therefore start
@@ -41,22 +40,18 @@ MODELS = (
     ('Recurrent axonal',     'rec_axonal',     'SNN_recurrent_delays'),
     ('Recurrent synaptic',   'rec_synaptic',   'SNN_synaptic_recurrent_delays'),
     ('Recurrent hybrid',     'rec_hybrid',     'SNN_recurrent_hybrid'),
-    ('FF+Rec axonal',        'ffrec_axonal',   'SNN_axonal_recurrent_and_feedforward_delays'),
-    ('FF+Rec synaptic',      'ffrec_synaptic', 'SNN_synaptic_recurrent_and_feedforward_delays'),
-    ('FF+Rec hybrid',        'ffrec_hybrid',   'SNN_hybrid_recurrent_and_feedforward_delays'),
 )
 
 # axonal / synaptic init outputs must agree within each pathway group.
 MATCHED_GROUPS = (
     ('feedforward', 'Feedforward axonal', 'Feedforward synaptic'),
     ('recurrent',   'Recurrent axonal',   'Recurrent synaptic'),
-    ('ff+rec',      'FF+Rec axonal',      'FF+Rec synaptic'),
 )
 
 PARAM_COLORS = {'axonal': 'tab:blue', 'synaptic': 'tab:orange', 'hybrid': 'tab:green'}
-# Pathway -> line style, so the nine curves stay distinct (colour encodes the
+# Pathway -> line style, so the six curves stay distinct (colour encodes the
 # parametrization, style encodes the pathway).
-PATHWAY_STYLES = {'Feedforward': '-', 'Recurrent': '--', 'FF+Rec': ':'}
+PATHWAY_STYLES = {'Feedforward': '-', 'Recurrent': '--'}
 
 
 def _reference_parameters(master):
@@ -121,12 +116,12 @@ def _inject(model, canon):
 
 
 def matched_models(config):
-    """Build the nine models, all seeded from one global reference master."""
+    """Build the six models, all seeded from one global reference master."""
     config = deepcopy(config)
     assert not config.no_delay_in_first_layer and not config.no_delay_in_last_layer, \
         'the reference master needs a delay filter on every feedforward projection'
-    # The recurrent-only trio honours this flag; the paired models ignore it. Force
-    # recurrence in every hidden layer so the three pathway groups stay comparable.
+    # The recurrent-only models honour this flag; the axonal master ignores it. Force
+    # recurrence in every hidden layer so the recurrent models match the master.
     config.no_recurrence_in_last_layer = False
 
     seed_everything(config.seed)
@@ -194,7 +189,7 @@ def main():
         other = torch.load(out / slug / 'dataset.pt', weights_only=True)
         assert all(torch.equal(ref_data[k], other[k]) for k in ref_data)
     (out / 'comparison.json').write_text(json.dumps({
-        'initialization': 'All nine models injected from one both-pathways axonal master '
+        'initialization': 'All six models injected from one both-pathways axonal master '
                           '(feedforward weights/biases and axonal delays, recurrent '
                           'weights/biases and axonal delays). Within each pathway group '
                           'axonal and synaptic start from identical outputs; hybrids add '
@@ -227,7 +222,7 @@ def plot_comparison(histories, results, config, out):
     axes[2].tick_params(axis='x', labelrotation=30, labelsize=8)
     for tick in axes[2].get_xticklabels():
         tick.set_ha('right')
-    fig.suptitle(f'Delay parametrization x pathway (3 x 3) | {config.task_type}, '
+    fig.suptitle(f'Delay parametrization x pathway (3 x 2) | {config.task_type}, '
                  f'{config.num_samples} samples, topology {config.input_size} → '
                  + ' → '.join(map(str, config.hidden_layers + [config.output_size])))
     for extension in ('png', 'pdf'):

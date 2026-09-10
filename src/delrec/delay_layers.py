@@ -23,7 +23,7 @@ from spikingjelly.activation_based import neuron, base, layer, surrogate
 from delrec.delay_layers_pytorch import (
     VanillaTorchScans, AxonalTorchScans, SynapticTorchScans,
 )
-from delrec.delay_layers_triton import AxonalTritonScans, SynapticTritonScans
+from delrec.delay_layers_triton import AxonalTritonScans, SynapticTritonScans, SynapticHybridScans
 
 
 def _make_recurrent_dropout(config):
@@ -208,7 +208,7 @@ class axonal_recdel(AxonalTorchScans, AxonalTritonScans, base.MemoryModule):
             return self.multi_step_forward_v2(x_seq)
 
 
-class synaptic_recdel(SynapticTorchScans, SynapticTritonScans, axonal_recdel):
+class synaptic_recdel(SynapticTorchScans, SynapticHybridScans, SynapticTritonScans, axonal_recdel):
     def __init__(
         self,
         config, 
@@ -238,12 +238,32 @@ class synaptic_recdel(SynapticTorchScans, SynapticTritonScans, axonal_recdel):
                 # Default: SYNAPTIC_CUDA_DEFAULT (eventdriven) on CUDA, pure-torch v2 on
                 # CPU. Eventdriven's LIF math assumes decay_input=False, so fall back to
                 # v2 when decay_input is set. (synaptic has no triton_exact path.)
-                fv = (SYNAPTIC_CUDA_DEFAULT
-                      if (x_seq.is_cuda
-                          and not getattr(self.neuron_module, 'decay_input', False))
-                      else 'v2')
+                on_cuda = (x_seq.is_cuda
+                           and not getattr(self.neuron_module, 'decay_input', False))
+                if (on_cuda and getattr(self, '_hybrid_delay', False)
+                        and not getattr(self, '_hybrid_kernel_failed', False)):
+                    # Learned axonal base + frozen integer offsets: try the dedicated
+                    # fused path. On any failure, pin this module to the pure-torch v2
+                    # scan for the rest of the run - the same speed floor as before
+                    # this path existed, and never a crash.
+                    from delrec.triton_kernels.synaptic_hybrid import hybrid_kernel_usable
+                    if hybrid_kernel_usable(self, x_seq):
+                        try:
+                            return self.multi_step_forward_hybrid_triton(x_seq)
+                        except Exception as exc:  # noqa: BLE001 - deliberate blanket fallback
+                            import warnings
+                            warnings.warn(f"hybrid delay Triton kernel unusable "
+                                          f"({exc!r}); pinning this layer to 'v2'.",
+                                          RuntimeWarning, stacklevel=2)
+                            self._hybrid_kernel_failed = True
+                if getattr(self, '_hybrid_kernel_failed', False):
+                    fv = 'v2'
+                else:
+                    fv = SYNAPTIC_CUDA_DEFAULT if on_cuda else 'v2'
             if fv == 'v1':
                 return self.multi_step_forward_v1(x_seq)
+            elif fv == 'hybrid_triton':
+                return self.multi_step_forward_hybrid_triton(x_seq)
             elif fv == 'eventdriven_torch':
                 raise ValueError(
                     "the pure-PyTorch event-driven reference was removed from this "

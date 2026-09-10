@@ -45,6 +45,17 @@ from .synaptic_eventdriven import (
     eventdriven_scatter_compact_forward,  # forward-only spike-sparse scatter (no autograd)
 )
 
+# hybrid recurrent delay: learned per-source axonal base + frozen integer
+# per-synapse offsets. Reuses the event-driven forward/BPTT; the delay gradient
+# gets a fused closed-form reduction (_hybrid_dd_kernel, @triton.autotune keyed on
+# (N, L)). Use via synaptic_recdel.forward_version = 'hybrid_triton', or
+# automatically when the module carries a _hybrid_delay tag.
+from .synaptic_hybrid import (
+    HybridSynDelay,                       # autograd.Function
+    hybrid_trainable_forward,             # main entry: autograd-enabled (T,B,N) -> (T,B,N)
+    hybrid_kernel_usable,                 # cheap host-side support gate
+)
+
 # Building blocks (extension surface)
 from .delays import build_mask, build_lag, build_lag_interp, build_syn_mask
 from .surrogate import _surrogate_grad, _SURR_ID
@@ -54,6 +65,7 @@ __all__ = [
     'AxonalRecdelTriton',
     'EventDrivenSyn', 'eventdriven_trainable_forward',
     'eventdriven_scatter_compact_forward',
+    'HybridSynDelay', 'hybrid_trainable_forward', 'hybrid_kernel_usable',
     'recdel_triton_forward', 'recdel_triton_backward',
     'recdel_fwd_kernel', 'recdel_bwd_kernel',
     'build_mask', 'build_lag', 'build_lag_interp', 'build_syn_mask',

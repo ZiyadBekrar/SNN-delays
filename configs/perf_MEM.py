@@ -19,7 +19,7 @@ class Config:
     output_size = 4
     input_gain = 1.0
     hidden_layers = [64]
-    epochs = 100
+    epochs = 20
     batch_size = 256
     num_workers = 0
     cpu_threads = 1

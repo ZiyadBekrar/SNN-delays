@@ -882,14 +882,22 @@ def _reparametrize_feedforward_delay(module, maximum, generator, config, *, free
 
 def _reparametrize_recurrent_delay(module, maximum, generator):
     """In place: tie a ``synaptic_recdel``'s (N, N) ``recurrent_delays`` to one learned
-    (N,) leaf plus the frozen (N, N) offsets, and force the (N, N)-capable v2 scan."""
+    (N,) leaf plus the frozen (N, N) offsets.
+
+    ``forward_version`` is left unset and the module is tagged ``_hybrid_delay`` so
+    ``synaptic_recdel.forward`` routes it: on CUDA to the dedicated fused hybrid
+    Triton path (``delrec.triton_kernels.synaptic_hybrid``) when that is usable,
+    to the spike-sparse event-driven kernel when the regime is unsupported, and to
+    the pure-torch ``v2`` scan on CPU or if the fused kernel ever fails at runtime.
+    """
     from torch.nn.utils import parametrize
     offsets = _draw_offsets(module.recurrent_delays.shape, maximum, generator)
     base = module.recurrent_delays[0].detach().clone()
     parametrize.register_parametrization(module, 'recurrent_delays',
         _AxonalWithFixedOffsets(offsets), unsafe=True)
     module.parametrizations.recurrent_delays.original = torch.nn.Parameter(base)
-    module.forward_version = 'v2'
+    module._hybrid_delay = True
+    module.forward_version = None
 
 
 class SNN_hybrid_recurrent_and_feedforward_delays(SNN_synaptic_recurrent_and_feedforward_delays):

@@ -2,6 +2,7 @@
 
     AxonalTritonScans    per-neuron delays:     'triton_exact'
     SynapticTritonScans  per-connection delays: 'eventdriven'
+    SynapticHybridScans  hybrid delays:         'hybrid_triton'
 
 Nothing here changes what the layers compute: spikes are bit-identical to
 :mod:`delrec.delay_layers_pytorch` and gradients equal to floating-point tolerance,
@@ -93,4 +94,20 @@ class SynapticTritonScans:
         if self.store_v_seq:
             self.v_seq = None
         return y
+
+
+class SynapticHybridScans:
+    """Dedicated fused scan for hybrid recurrent delays.
+
+    A hybrid ``synaptic_recdel`` (learned per-source axonal base + frozen integer
+    per-synapse offsets) is numerically an ordinary per-synapse delay, so the
+    forward/recurrence reuse the event-driven kernels; only the delay gradient
+    gets a fused closed-form reduction. See ``delrec.triton_kernels.synaptic_hybrid``.
+    """
+
+    def multi_step_forward_hybrid_triton(self, x_seq: torch.Tensor):
+        """Autograd-enabled hybrid-delay forward. Raises on an unsupported regime
+        or any Triton failure so the caller can fall back to 'eventdriven' / 'v2'."""
+        from delrec.triton_kernels.synaptic_hybrid import hybrid_trainable_forward
+        return hybrid_trainable_forward(self, x_seq)
 
