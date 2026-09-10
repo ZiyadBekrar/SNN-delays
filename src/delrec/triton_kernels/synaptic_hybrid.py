@@ -211,6 +211,9 @@ class HybridSynDelay(torch.autograd.Function):
         return dx, dW, dd, dbias, None, None
 
 
+_ANNOUNCED = set()
+
+
 def hybrid_trainable_forward(layer, x_seq):
     """Autograd-enabled hybrid-delay forward for a hybrid ``synaptic_recdel``.
     Grads wire to ``recurrent_weights``, the ``(N_out,)`` learned delay base
@@ -219,6 +222,10 @@ def hybrid_trainable_forward(layer, x_seq):
     if not _HAVE_TRITON:
         raise RuntimeError("Triton unavailable")
     T, B, N = x_seq.shape
+    if N not in _ANNOUNCED:
+        _ANNOUNCED.add(N)
+        print(f"[delrec] hybrid recurrent delay: fused Triton kernel active "
+              f"(N={N}, T={T}, B={B})", flush=True)
     if layer.training and getattr(layer.config, "recurrent_dropout_rate", 0.0) > 0:
         drop = layer.dropout(torch.ones(B, N, device=x_seq.device, dtype=x_seq.dtype))
     else:

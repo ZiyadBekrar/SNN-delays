@@ -252,9 +252,10 @@ class synaptic_recdel(SynapticTorchScans, SynapticHybridScans, SynapticTritonSca
                             return self.multi_step_forward_hybrid_triton(x_seq)
                         except Exception as exc:  # noqa: BLE001 - deliberate blanket fallback
                             import warnings
-                            warnings.warn(f"hybrid delay Triton kernel unusable "
-                                          f"({exc!r}); pinning this layer to 'v2'.",
-                                          RuntimeWarning, stacklevel=2)
+                            msg = (f"hybrid delay Triton kernel unusable ({exc!r}); "
+                                   f"pinning this layer to 'v2'.")
+                            print(f"[delrec] {msg}", flush=True)
+                            warnings.warn(msg, RuntimeWarning, stacklevel=2)
                             self._hybrid_kernel_failed = True
                 if getattr(self, '_hybrid_kernel_failed', False):
                     fv = 'v2'
