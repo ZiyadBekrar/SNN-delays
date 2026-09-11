@@ -1,7 +1,7 @@
 """Aggregate multi-seed statistics for recurrent-delay SNNs trained on SSC.
 
 Compares two model families (the hardcoded run set in ``SSC.config.RUN_DIRS``):
-  SNN_recurrent_delays         (delays are learned)
+  SNN_axonal_recurrent_delays         (delays are learned)
   SNN_fixed_recurrent_delays   (delays frozen at init)
 
 For each family it gathers every seed and produces test-accuracy, delay

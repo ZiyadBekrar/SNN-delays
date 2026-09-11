@@ -4,9 +4,9 @@ Trains four feedforward networks on one fixed random-label dataset and plots the
 together:
 
     No delays    SNN                          (plain LIF stack, no delays)
-    Synaptic FF  SNN_feedforward_delays        (one learned delay per connection)
+    Synaptic FF  SNN_synaptic_feedforward_delays        (one learned delay per connection)
     Axonal FF    SNN_axonal_feedforward_delays (one learned delay per source neuron)
-    Hybrid FF    SNN_feedforward_hybrid        (learned axonal delay + fixed random
+    Hybrid FF    SNN_hybrid_feedforward_delays        (learned axonal delay + fixed random
                                                 per-synapse offset, d_ij = d_j + delta_ij)
 
 This is the feedforward analogue of experiments/compare_mem_delays.py (which
@@ -30,9 +30,9 @@ from delrec.networks import dcls_module, learned_delay_parameter
 
 MODELS = [
     ("No delays",   "SNN"),
-    ("Synaptic FF", "SNN_feedforward_delays"),
+    ("Synaptic FF", "SNN_synaptic_feedforward_delays"),
     ("Axonal FF",   "SNN_axonal_feedforward_delays"),
-    ("Hybrid FF",   "SNN_feedforward_hybrid"),
+    ("Hybrid FF",   "SNN_hybrid_feedforward_delays"),
 ]
 COLORS = ["tab:gray", "tab:orange", "tab:blue", "tab:green"]
 

@@ -224,7 +224,7 @@ if __name__ == "__main__":
     WEIGHT_DECAYS = [float(s) for s in os.environ.get(
         "HAR_WEIGHT_DECAYS", "0,1e-3,3e-3,1e-2,3e-2,1e-1").split(",")]
     MODELS = [s for s in os.environ.get(
-        "HAR_MODELS", "SNN_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
+        "HAR_MODELS", "SNN_axonal_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
     seed_list = [int(s) for s in os.environ.get("HAR_SEEDS", "0,1,2").split(",")]
     DELAY_STD_INIT = int(os.environ.get("HAR_DELAY_STD_INIT", "8"))
     # round_pos=1 matches the existing std8 comparison runs (roundpos1).

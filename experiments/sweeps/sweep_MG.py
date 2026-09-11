@@ -79,7 +79,7 @@ DELAY_TYPE = os.environ.get("MG_DELAY_TYPE", "synaptic")
 
 # delay type -> (learned class, fixed class) in src/SSC/snn.py
 _RECDEL_CLASSES = {
-    'axonal':   ('SNN_recurrent_delays', 'SNN_fixed_recurrent_delays'),
+    'axonal':   ('SNN_axonal_recurrent_delays', 'SNN_fixed_recurrent_delays'),
     'synaptic': ('SNN_synaptic_recurrent_delays', 'SNN_fixed_synaptic_recurrent_delays'),
 }
 

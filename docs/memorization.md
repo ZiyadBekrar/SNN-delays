@@ -18,7 +18,7 @@ Examples for comparing configurations:
 .venv/bin/python experiments/train_mem.py --task-type spatial
 .venv/bin/python experiments/train_mem.py --hidden-layers 64,64 --num-samples 256
 .venv/bin/python experiments/train_mem.py --model SNN_vanilla_recurrent
-.venv/bin/python experiments/train_mem.py --model SNN_feedforward_delays --seed 1
+.venv/bin/python experiments/train_mem.py --model SNN_synaptic_feedforward_delays --seed 1
 .venv/bin/python experiments/train_mem.py --epochs 300 --readout last
 ```
 

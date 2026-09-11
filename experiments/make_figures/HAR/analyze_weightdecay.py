@@ -65,7 +65,7 @@ INCLUDE_STD_SWEEP = True
 
 # family -> (swept learned model class, fixed-baseline model key in har.MODEL_INFO)
 FAMILIES = {
-    "axonal":   ("SNN_recurrent_delays",           "ax_fixed"),
+    "axonal":   ("SNN_axonal_recurrent_delays",           "ax_fixed"),
     "synaptic": ("SNN_synaptic_recurrent_delays",  "syn_fixed"),
 }
 FIXED_STD = 8  # the fixed-delay baselines to compare against (matches the sweep's delay_std_init)

@@ -108,7 +108,7 @@ def build_triples():
         "HAR_SPIKE_PENALTIES", "0,0.1,0.3,1,3,10,30").split(",")]
     models = [s for s in os.environ.get(
         "HAR_MODELS",
-        "SNN_recurrent_delays,SNN_synaptic_recurrent_delays,"
+        "SNN_axonal_recurrent_delays,SNN_synaptic_recurrent_delays,"
         "SNN_fixed_recurrent_delays,SNN_fixed_synaptic_recurrent_delays,"
         "SNN_vanilla_recurrent").split(",") if s]
     dsi = float(os.environ.get("HAR_DELAY_STD_INIT", str(DELAY_STD_INIT)))

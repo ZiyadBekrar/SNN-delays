@@ -258,7 +258,7 @@ def build_pairs():
     # Learned families only: the fixed ones are integer-valued at init, so rounding
     # them is a no-op.
     models = [s for s in os.environ.get(
-        "AL_MODELS", "SNN_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
+        "AL_MODELS", "SNN_axonal_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
     sweep_root = os.environ.get("AL_SWEEP_ROOT", './exp/AL/rounding_sweep')
 
     pairs = [(m, s) for m in models for s in seeds]

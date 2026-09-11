@@ -266,7 +266,7 @@ if __name__ == "__main__":
         "HAR_SPIKE_PENALTIES", "0,0.1,0.3,1,3,10,30").split(",")]
     MODELS = [s for s in os.environ.get(
         "HAR_MODELS",
-        "SNN_recurrent_delays,SNN_synaptic_recurrent_delays,"
+        "SNN_axonal_recurrent_delays,SNN_synaptic_recurrent_delays,"
         "SNN_fixed_recurrent_delays,SNN_fixed_synaptic_recurrent_delays,"
         "SNN_vanilla_recurrent").split(",") if s]
     seed_list = [int(s) for s in os.environ.get("HAR_SEEDS", "0,1,2").split(",")]

@@ -1,6 +1,6 @@
 """Verify the hybrid delay networks on the target device before trusting a run.
 
-  SNN_recurrent_hybrid   - the recurrent hybrid uses a fused Triton path on CUDA
+  SNN_recurrent_hybrid_delays   - the recurrent hybrid uses a fused Triton path on CUDA
                            (delrec.triton_kernels.synaptic_hybrid). Run one
                            forward + backward with forward_version='v2' (the
                            pure-torch reference) and with 'hybrid_triton', and
@@ -8,7 +8,7 @@
                            "The Kaggle run didn't crash" only proves the kernels
                            compiled - this proves they compute the right thing.
 
-  SNN_feedforward_hybrid - no recurrence and no delrec Triton kernel: its hybrid
+  SNN_hybrid_feedforward_delays - no recurrence and no delrec Triton kernel: its hybrid
                            delay rides DCLS's own CUDA conv. There is no second
                            path to diff against, so this is a smoke check - builds,
                            forward + backward run, output finite, the learned delay
@@ -36,7 +36,7 @@ from delrec.delay_layers import synaptic_recdel
 from delrec.networks import dcls_module, learned_delay_parameter
 from delrec.utils import reset_states
 
-MODELS = ["SNN_recurrent_hybrid", "SNN_feedforward_hybrid"]
+MODELS = ["SNN_recurrent_hybrid_delays", "SNN_hybrid_feedforward_delays"]
 T, B = 24, 8
 FWD_ATOL, FWD_RTOL = 1e-4, 1e-4
 GRAD_ATOL, GRAD_RTOL = 2e-4, 2e-3
@@ -88,7 +88,7 @@ def check(model_name, device):
         return False
 
     if device.type != "cuda" or not _has_triton_recdel(model):
-        # smoke check only: SNN_feedforward_hybrid always, everything on CPU.
+        # smoke check only: SNN_hybrid_feedforward_delays always, everything on CPU.
         delay_leaves = [learned_delay_parameter(m, "P")
                         for m in model.modules() if isinstance(m, dcls_module)]
         delay_leaves += [learned_delay_parameter(m, "recurrent_delays")

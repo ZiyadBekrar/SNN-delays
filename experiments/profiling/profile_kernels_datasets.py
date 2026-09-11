@@ -42,7 +42,7 @@ from profile_kernels import MODES_BY_KIND, MIB, gpu_tag
 # --------------------------------------------------------------------------- #
 # Benchmark configuration
 # --------------------------------------------------------------------------- #
-# (dataset tag, config import path, real-loss fn). SNN_recurrent_delays (axonal)
+# (dataset tag, config import path, real-loss fn). SNN_axonal_recurrent_delays (axonal)
 # and SNN_synaptic_recurrent_delays (synaptic) are the same classes HAR/SSC train.
 DATASETS = [
     ("SSC", "configs.perf_SSC", calc_loss_SSC),
@@ -50,7 +50,7 @@ DATASETS = [
     ("PSMNIST", "configs.perf_PSMNIST", calc_loss_SSC),   # reuses SSC's snn.py + loss
 ]
 KINDS = [
-    ("axonal",   "SNN_recurrent_delays"),
+    ("axonal",   "SNN_axonal_recurrent_delays"),
     ("synaptic", "SNN_synaptic_recurrent_delays"),
 ]
 
@@ -90,7 +90,7 @@ def build_vanilla_model(cfg, device):
     is untouched, so this isolates the cost of the whole delay machinery. Same for
     both kinds (vanilla has no delay type), so it's the common baseline floor."""
     seed_everything(seed=SEED, is_cuda=True)
-    model = snn_module.SNN_recurrent_delays(cfg).to(device)
+    model = snn_module.SNN_axonal_recurrent_delays(cfg).to(device)
     new_layers = [vanilla_recurrent(cfg, m.neurons, cfg.neuron_module).to(device)
                   if isinstance(m, axonal_recdel) else m
                   for m in model.layers]

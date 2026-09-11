@@ -65,7 +65,7 @@ python fetch_checkpoints.py --dataset ssc
 ## Train
 
 ```bash
-python experiments/train.py --dataset ssc --model SNN_recurrent_delays --seeds 0,1,2,3,4
+python experiments/train.py --dataset ssc --model SNN_axonal_recurrent_delays --seeds 0,1,2,3,4
 python experiments/train.py --dataset al --smoke                 # 2 epochs on a few batches
 python experiments/sweeps/parallel_sweep_HAR_delaystd.py         # one process per run per GPU
 python experiments/profiling/profile_kernels.py                  # kernel time and memory
@@ -73,7 +73,7 @@ python experiments/profiling/profile_kernels.py                  # kernel time a
 
 | model | delays |
 |---|---|
-| `SNN_recurrent_delays` | axonal, learned |
+| `SNN_axonal_recurrent_delays` | axonal, learned |
 | `SNN_fixed_recurrent_delays` | axonal, fixed |
 | `SNN_synaptic_recurrent_delays` | synaptic, learned |
 | `SNN_fixed_synaptic_recurrent_delays` | synaptic, fixed |

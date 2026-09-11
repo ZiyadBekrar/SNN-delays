@@ -3,7 +3,7 @@
 ## One model
 
 ```bash
-python experiments/train.py --dataset ssc --model SNN_recurrent_delays --seeds 0,1,2,3,4
+python experiments/train.py --dataset ssc --model SNN_axonal_recurrent_delays --seeds 0,1,2,3,4
 python experiments/train.py --dataset al --smoke                 # check the pipeline runs
 ```
 
@@ -36,7 +36,7 @@ perm.pt              the pixel permutation, PS-MNIST only
 
 | class | delay type | delays |
 |---|---|---|
-| `SNN_recurrent_delays` | axonal | learned |
+| `SNN_axonal_recurrent_delays` | axonal | learned |
 | `SNN_fixed_recurrent_delays` | axonal | frozen at a random initialization |
 | `SNN_synaptic_recurrent_delays` | synaptic | learned |
 | `SNN_fixed_synaptic_recurrent_delays` | synaptic | frozen at a random initialization |

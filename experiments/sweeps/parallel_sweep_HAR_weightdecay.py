@@ -123,7 +123,7 @@ def build_triples():
         values = [float(s) for s in os.environ.get(
             "HAR_WEIGHT_DECAYS", "0.04,0.05,0.06,0.07").split(",")]
         models = [s for s in os.environ.get(
-            "HAR_MODELS", "SNN_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
+            "HAR_MODELS", "SNN_axonal_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
         dsi = float(os.environ.get("HAR_DELAY_STD_INIT", "8"))
         sweep_root = os.environ.get("HAR_SWEEP_ROOT", './exp/HAR/weight_decay_sweep')
     elif axis == "std":

@@ -32,7 +32,7 @@ from delrec.datasets import load_dataset
 
 
 # No-rounding counterpart of sweep_HAR_delaystd.py, for the two LEARNED families
-# only (axonal SNN_recurrent_delays, synaptic SNN_synaptic_recurrent_delays). It
+# only (axonal SNN_axonal_recurrent_delays, synaptic SNN_synaptic_recurrent_delays). It
 # trains the exact same delay_std_init sweep but with round_pos_each_epoch=False,
 # so the learnable recurrent delays are kept FRACTIONAL: the HAR trainer's test()
 # takes the clamp-only branch (floor at 0, no round) every epoch AND at the final
@@ -197,7 +197,7 @@ if __name__ == "__main__":
     # Sweep axes (all overridable via env for splitting / smoke tests).
     DELAY_STD_INITS = [int(s) for s in os.environ.get("HAR_DELAY_STD_INITS", "3,8,13,18,23").split(",")]
     MODELS = [s for s in os.environ.get(
-        "HAR_MODELS", "SNN_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
+        "HAR_MODELS", "SNN_axonal_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
     seed_list = [int(s) for s in os.environ.get("HAR_SEEDS", "0,1,2").split(",")]
     # No-rounding sweep: round_pos defaults OFF (that is the point). Env can still force it.
     ROUND_POS = os.environ.get("HAR_ROUND_POS", "0").lower() in ("1", "true", "yes")

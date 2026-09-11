@@ -12,7 +12,7 @@ fractional delays onto the integer grid costs it 12 to 17 accuracy points.
 Outputs:  exp/<dataset>/<ModelClass>/perf/seed<N>_<timestamp>/ with config.json,
           train_res.csv, val_res.csv, best.pth, last.pth, init_delays.npz,
           final_delays.npz, final_test.json (+ perm.pt on PS-MNIST)
-Usage:    python experiments/train.py --dataset ssc --model SNN_recurrent_delays --seeds 0,1,2,3,4
+Usage:    python experiments/train.py --dataset ssc --model SNN_axonal_recurrent_delays --seeds 0,1,2,3,4
           python experiments/train.py --dataset ssc --smoke
 """
 
@@ -70,13 +70,13 @@ class Spec:
 
 SPECS = {
     "ssc":     Spec("configs.perf_SSC",     "delrec.training.ssc",     "delrec.networks",
-                    "SNN_recurrent_delays", resettable_loaders=True),
+                    "SNN_axonal_recurrent_delays", resettable_loaders=True),
     "psmnist": Spec("configs.perf_PSMNIST", "delrec.training.psmnist", "delrec.networks",
-                    "SNN_recurrent_delays", needs_perm=True),
+                    "SNN_axonal_recurrent_delays", needs_perm=True),
     "har":     Spec("configs.perf_HAR",     "delrec.training.har",     "delrec.networks",
-                    "SNN_recurrent_delays"),
+                    "SNN_axonal_recurrent_delays"),
     "al":      Spec("configs.perf_AL",      "delrec.training.al",      "delrec.networks",
-                    "SNN_recurrent_delays"),
+                    "SNN_axonal_recurrent_delays"),
     # The SHD stack (the SHD appendix) predates the others and has its own zoo,
     # trainer and readout. Its final test uses the training-time spread.
     "shd":     Spec("configs.perf_SHD",     "delrec.training.shd",     "delrec.networks_shd",
@@ -253,7 +253,7 @@ def main():
     p.add_argument("--dataset", required=True, choices=sorted(SPECS))
     p.add_argument("--model", default=None,
                    help="network class from the benchmark's zoo "
-                        "(default: SNN_recurrent_delays, i.e. learned axonal delays)")
+                        "(default: each dataset's learned-axonal-delay class, see SPECS)")
     p.add_argument("--seeds", default="0", help="comma-separated, e.g. 0,1,2,3,4")
     p.add_argument("--kernel", default=os.environ.get("REC_FWD") or None,
                    help="axonal recurrent scan: v1|v2|triton_exact")

@@ -27,7 +27,7 @@ from common.utils import (AnalysisSpec, load_config_json, load_recurrent_params,
 # --------------------------------------------------------------------------- #
 _SW = paths.runs("HAR/std_init_sweep")
 MODEL_INFO = {
-    "ax_learned":  (_SW, "SNN_recurrent_delays"),
+    "ax_learned":  (_SW, "SNN_axonal_recurrent_delays"),
     "ax_fixed":    (_SW, "SNN_fixed_recurrent_delays"),
     "syn_learned": (_SW, "SNN_synaptic_recurrent_delays"),
     "syn_fixed":   (_SW, "SNN_fixed_synaptic_recurrent_delays"),

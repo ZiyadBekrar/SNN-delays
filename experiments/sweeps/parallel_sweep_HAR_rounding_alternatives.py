@@ -102,7 +102,7 @@ def build_quads():
     values = [int(s) for s in os.environ.get(
         "HAR_DELAY_STD_INITS", "3,8,13,18,23").split(",")]
     models = [s for s in os.environ.get(
-        "HAR_MODELS", "SNN_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
+        "HAR_MODELS", "SNN_axonal_recurrent_delays,SNN_synaptic_recurrent_delays").split(",") if s]
     modes = [s for s in os.environ.get("HAR_ROUND_MODES", "ste,stochastic").split(",") if s]
     sweep_root = os.environ.get("HAR_SWEEP_ROOT", './exp/HAR/rounding_alternatives_sweep')
     overwrite = os.environ.get("HAR_OVERWRITE", "0").lower() in ("1", "true", "yes")

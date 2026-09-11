@@ -193,7 +193,7 @@ if __name__ == "__main__":
     # Sweep axes (all overridable via env for splitting / smoke tests).
     DELAY_STD_INITS = [int(s) for s in os.environ.get("HAR_DELAY_STD_INITS", "3,8,13,18,23").split(",")]
     MODELS = [s for s in os.environ.get(
-        "HAR_MODELS", "SNN_recurrent_delays,SNN_fixed_recurrent_delays").split(",") if s]
+        "HAR_MODELS", "SNN_axonal_recurrent_delays,SNN_fixed_recurrent_delays").split(",") if s]
     seed_list = [int(s) for s in os.environ.get("HAR_SEEDS", "0,1,2").split(",")]
     # round_pos defaults ON: the runs already trained under exp/HAR/std_init_sweep/
     # are roundpos1, so new seeds must match them.

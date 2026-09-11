@@ -35,11 +35,11 @@ from delrec.utils import reset_states, seed_everything
 # built (config, model) pairs in this exact order.
 MODELS = (
     ('Feedforward axonal',   'ff_axonal',      'SNN_axonal_feedforward_delays'),
-    ('Feedforward synaptic', 'ff_synaptic',    'SNN_feedforward_delays'),
-    ('Feedforward hybrid',   'ff_hybrid',      'SNN_feedforward_hybrid'),
-    ('Recurrent axonal',     'rec_axonal',     'SNN_recurrent_delays'),
+    ('Feedforward synaptic', 'ff_synaptic',    'SNN_synaptic_feedforward_delays'),
+    ('Feedforward hybrid',   'ff_hybrid',      'SNN_hybrid_feedforward_delays'),
+    ('Recurrent axonal',     'rec_axonal',     'SNN_axonal_recurrent_delays'),
     ('Recurrent synaptic',   'rec_synaptic',   'SNN_synaptic_recurrent_delays'),
-    ('Recurrent hybrid',     'rec_hybrid',     'SNN_recurrent_hybrid'),
+    ('Recurrent hybrid',     'rec_hybrid',     'SNN_recurrent_hybrid_delays'),
 )
 
 # axonal / synaptic init outputs must agree within each pathway group.

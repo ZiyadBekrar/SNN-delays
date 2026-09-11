@@ -44,8 +44,8 @@ REFERENCE = "learned_delays"
 
 # family -> delrec.networks class name it was trained with (must match experiments/sweeps/sweep_MG.FAMILIES)
 MODEL_PREFIXES = {
-    "learned_delays":       "SNN_recurrent_delays",
-    "learned_no_annealing": "SNN_recurrent_delays",
+    "learned_delays":       "SNN_axonal_recurrent_delays",
+    "learned_no_annealing": "SNN_axonal_recurrent_delays",
     "fixed_delays":         "SNN_fixed_recurrent_delays",
     "no_delays":            "SNN_vanilla_recurrent",
 }

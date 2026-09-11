@@ -77,7 +77,7 @@ FIGSIZE_PANEL = (5.6, 4.6)   # same canvas as the per-type hero frontier panel
 # har.MODEL_INFO. ``vanilla`` is the extra family this sweep trains and is kept out of
 # har.MODEL_INFO on purpose (no recurrent delays -> the delay views are degenerate).
 FAMILIES = {
-    "ax_learned":  "SNN_recurrent_delays",
+    "ax_learned":  "SNN_axonal_recurrent_delays",
     "ax_fixed":    "SNN_fixed_recurrent_delays",
     "syn_learned": "SNN_synaptic_recurrent_delays",
     "syn_fixed":   "SNN_fixed_synaptic_recurrent_delays",

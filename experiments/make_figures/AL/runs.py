@@ -43,7 +43,7 @@ RUN_ROOT = paths.runs("AL")
 RUN_SUBDIR = "perf_triton"  # the per-family folder the AL runs live in
 
 MODEL_PREFIXES = {
-    "ax_learned":  "SNN_recurrent_delays",
+    "ax_learned":  "SNN_axonal_recurrent_delays",
     "ax_fixed":    "SNN_fixed_recurrent_delays",
     "syn_learned": "SNN_synaptic_recurrent_delays",
     "syn_fixed":   "SNN_fixed_synaptic_recurrent_delays",

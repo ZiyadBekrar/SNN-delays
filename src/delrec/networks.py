@@ -3,7 +3,7 @@
 A hidden block is Linear -> Dropout -> neuron -> spike_registrator -> [BatchNorm]. The network ends in a Linear plus a leaky-integrate layer with an infinite
 threshold, so ``forward`` returns a membrane sequence rather than spikes.
 
-The class hierarchy is the experimental matrix: ``SNN_recurrent_delays`` (axonal,
+The class hierarchy is the experimental matrix: ``SNN_axonal_recurrent_delays`` (axonal,
 learned) is the base, and each sibling changes exactly one thing, the delay shape
 (synaptic), whether the delays are trained (fixed), or whether they exist at all
 (vanilla). ``spike_registrator`` is a pass-through that stashes spike trains for
@@ -137,7 +137,7 @@ class SNN(torch.nn.Module):
                 elif self.config.init_ff_weights == 'default':
                     pass
     
-class SNN_recurrent_delays(SNN):
+class SNN_axonal_recurrent_delays(SNN):
     def __init__(self, config):
         super().__init__(config)
         
@@ -231,13 +231,13 @@ class SNN_recurrent_delays(SNN):
         return logs
 
 
-class SNN_synaptic_recurrent_delays(SNN_recurrent_delays):
-    """Identical to SNN_recurrent_delays but with per-synapse delays (synaptic_recdel,
+class SNN_synaptic_recurrent_delays(SNN_axonal_recurrent_delays):
+    """Identical to SNN_axonal_recurrent_delays but with per-synapse delays (synaptic_recdel,
     recurrent_delays shape (N, N)) instead of per-neuron axonal delays.
     """
 
     def __init__(self, config):
-        # Skip SNN_recurrent_delays.__init__ (it hardcodes axonal_recdel). Rebuild
+        # Skip SNN_axonal_recurrent_delays.__init__ (it hardcodes axonal_recdel). Rebuild
         # the same layer stack with synaptic_recdel at the one recurrent site.
         SNN.__init__(self, config)
 
@@ -280,13 +280,13 @@ class SNN_synaptic_recurrent_delays(SNN_recurrent_delays):
         self.init_weights()
 
 
-class SNN_common_recurrent_delays(SNN_recurrent_delays):
-    """Identical to SNN_recurrent_delays but each recurrent layer learns a single shared delay
+class SNN_common_recurrent_delays(SNN_axonal_recurrent_delays):
+    """Identical to SNN_axonal_recurrent_delays but each recurrent layer learns a single shared delay
     (common_recdel, recurrent_delays shape (1,)) instead of per-neuron axonal delays.
     """
 
     def __init__(self, config):
-        # Skip SNN_recurrent_delays.__init__ (it hardcodes axonal_recdel). Rebuild
+        # Skip SNN_axonal_recurrent_delays.__init__ (it hardcodes axonal_recdel). Rebuild
         # the same layer stack with common_recdel at the one recurrent site.
         SNN.__init__(self, config)
 
@@ -329,7 +329,7 @@ class SNN_common_recurrent_delays(SNN_recurrent_delays):
         self.init_weights()
 
 
-class SNN_vanilla_recurrent(SNN_recurrent_delays):
+class SNN_vanilla_recurrent(SNN_axonal_recurrent_delays):
     def __init__(self, config):
         super().__init__(config)
 
@@ -352,7 +352,7 @@ class SNN_vanilla_recurrent(SNN_recurrent_delays):
     def forward(self, x):
         return super().forward(x)
 
-class SNN_fixed_recurrent_delays(SNN_recurrent_delays):
+class SNN_fixed_recurrent_delays(SNN_axonal_recurrent_delays):
     def __init__(self, config):
         super().__init__(config)
         
@@ -399,7 +399,7 @@ class SNN_fixed_synaptic_recurrent_delays(SNN_synaptic_recurrent_delays):
     def forward(self, x):
         return super().forward(x)
 
-class SNN_feedforward_delays(SNN):
+class SNN_synaptic_feedforward_delays(SNN):
     def __init__(self, config):
         super().__init__(config)
         
@@ -518,7 +518,7 @@ class SNN_feedforward_delays(SNN):
                 
         return logs
 
-class SNN_axonal_feedforward_delays(SNN_feedforward_delays):
+class SNN_axonal_feedforward_delays(SNN_synaptic_feedforward_delays):
     def __init__(self, config):
         super().__init__(config)
 
@@ -568,7 +568,7 @@ class SNN_axonal_feedforward_delays(SNN_feedforward_delays):
         Axonal: a depthwise unit-weight DCLS filter that only time-shifts each
         source channel, followed by a trainable ``nn.Linear`` that owns the weights
         and bias. Subclasses override this to change the delay parametrization
-        (see ``SNN_feedforward_hybrid``); it mirrors
+        (see ``SNN_hybrid_feedforward_delays``); it mirrors
         ``SNN_axonal_recurrent_and_feedforward_delays._projection``.
 
         The depthwise conv must not add current: a bias there is one constant per
@@ -641,10 +641,10 @@ class SNN_axonal_feedforward_delays(SNN_feedforward_delays):
                 
         return logs
 
-class SNN_recurrent_and_feedforward_delays(SNN_feedforward_delays, SNN_recurrent_delays):
+class SNN_recurrent_and_feedforward_delays(SNN_synaptic_feedforward_delays, SNN_axonal_recurrent_delays):
 
     def __init__(self, config):
-        super(SNN_feedforward_delays, self).__init__(config)  
+        super(SNN_synaptic_feedforward_delays, self).__init__(config)  
 
         self.config = config
 
@@ -686,21 +686,21 @@ class SNN_recurrent_and_feedforward_delays(SNN_feedforward_delays, SNN_recurrent
 
         self.layers = torch.nn.Sequential(*layers)
 
-        SNN_feedforward_delays.init_weights(self)
+        SNN_synaptic_feedforward_delays.init_weights(self)
 
     def forward(self, x):
         return SNN.forward(self, x)
     
     def clamp_delays(self):
-        SNN_feedforward_delays.clamp_delays(self)
-        SNN_recurrent_delays.clamp_delays(self)
+        SNN_synaptic_feedforward_delays.clamp_delays(self)
+        SNN_axonal_recurrent_delays.clamp_delays(self)
         
     def round_pos(self):
-        SNN_feedforward_delays.round_pos(self)
-        SNN_recurrent_delays.round_pos(self)
+        SNN_synaptic_feedforward_delays.round_pos(self)
+        SNN_axonal_recurrent_delays.round_pos(self)
         
     def log_params(self):
-        logs = SNN_feedforward_delays.log_params(self)
+        logs = SNN_synaptic_feedforward_delays.log_params(self)
         for idx, layer in enumerate(self.layers):
             if isinstance(layer, axonal_recdel):
                     logs[f'sigma_rec{idx}'] = layer.sigma
@@ -771,7 +771,7 @@ class SNN_axonal_recurrent_and_feedforward_delays(SNN_recurrent_and_feedforward_
                 torch.nn.Linear(inputs, outputs, bias=self.config.bias)]
 
     def init_weights(self):
-        SNN_feedforward_delays.init_weights(self)
+        SNN_synaptic_feedforward_delays.init_weights(self)
         if self.axonal_feedforward:
             for module in self.layers:
                 if isinstance(module, dcls_module):
@@ -966,7 +966,7 @@ class SNN_hybrid_recurrent_and_feedforward_delays(SNN_synaptic_recurrent_and_fee
         self.clamp_delays()
 
 
-class SNN_feedforward_hybrid(SNN_axonal_feedforward_delays):
+class SNN_hybrid_feedforward_delays(SNN_axonal_feedforward_delays):
     """Feedforward-only hybrid delays: learned axonal position + fixed random per-synapse offset.
 
     Effective feedforward delay d(i, j) = d_j + delta_ij (j = presynaptic source).
@@ -1050,20 +1050,20 @@ class SNN_feedforward_hybrid(SNN_axonal_feedforward_delays):
         self.clamp_delays()
 
 
-class SNN_recurrent_hybrid(SNN_hybrid_recurrent_and_feedforward_delays):
+class SNN_recurrent_hybrid_delays(SNN_hybrid_recurrent_and_feedforward_delays):
     """Recurrent-only hybrid delays: learned axonal position + fixed random synaptic offset.
 
     Effective recurrent delay d(i, j) = d_j + delta_ij. d_j is a single learned
     axonal delay per neuron, shared across all of its recurrent connections (as in
-    ``SNN_recurrent_delays``); delta_ij is a per-synapse integer offset drawn once
+    ``SNN_axonal_recurrent_delays``); delta_ij is a per-synapse integer offset drawn once
     and stored as a buffer, never trained. The result keeps the per-synapse delay
     resolution of ``SNN_synaptic_recurrent_delays`` while optimizing only the
     axonal parameter count.
 
-    This is the recurrent-only analogue of ``SNN_feedforward_hybrid``. ``_projection``
+    This is the recurrent-only analogue of ``SNN_hybrid_feedforward_delays``. ``_projection``
     returns a plain trainable Linear for every layer, so no ``dcls_module`` is built
     and the inherited ``clamp_delays`` / ``round_pos`` only ever touch the recurrent
-    modules. ``hybrid_max_synaptic_delay == 0`` is byte-for-byte ``SNN_recurrent_delays``
+    modules. ``hybrid_max_synaptic_delay == 0`` is byte-for-byte ``SNN_axonal_recurrent_delays``
     (it honours ``no_recurrence_in_last_layer`` and runs the same constructor).
 
     Config knobs (shared with the other hybrids):
@@ -1077,7 +1077,7 @@ class SNN_recurrent_hybrid(SNN_hybrid_recurrent_and_feedforward_delays):
         maximum, _seed = _hybrid_params(config)
         if maximum == 0:
             self._hybrid_max = 0
-            SNN_recurrent_delays.__init__(self, config)
+            SNN_axonal_recurrent_delays.__init__(self, config)
             return
         super().__init__(config)
 

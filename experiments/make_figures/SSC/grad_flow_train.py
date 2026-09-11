@@ -32,7 +32,7 @@ from common import paths
 
 # model key -> (delrec.networks class, label, color, linestyle)
 MODELS = {
-    "ax_learned": ("SNN_recurrent_delays", "Axonal learned",
+    "ax_learned": ("SNN_axonal_recurrent_delays", "Axonal learned",
                    style.CONDITION_COLORS["learned"], style.CONDITION_LS["learned"]),
     "ax_fixed":   ("SNN_fixed_recurrent_delays", "Axonal fixed",
                    style.CONDITION_COLORS["fixed"], style.CONDITION_LS["fixed"]),
