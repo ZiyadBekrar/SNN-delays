@@ -16,7 +16,7 @@ class Config:
     num_samples = 4352
     input_size = 16
     time_window = 32
-    output_size = 4
+    output_size = 8
     input_gain = 1.0
     hidden_layers = [64]
     epochs = 2000
