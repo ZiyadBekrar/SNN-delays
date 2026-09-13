@@ -61,7 +61,7 @@ class Config:
     # hybrid_max_synaptic_delay == 0 makes each hybrid byte-for-byte its paired axonal
     # model; > 0 uses a fused dense DCLS module whose init/bias now match the axonal
     # class, so hybrid checkpoints trained before that change will not load.
-    hybrid_max_synaptic_delay = 8  # fixed integer offsets in [0, 4] on both pathways
+    hybrid_max_synaptic_delay = 12  # fixed integer offsets in [0, 12] on both pathways
     hybrid_delay_seed = 123  # independent of dataset and model seed
     round_delays = False
     round_pos_each_epoch = False
