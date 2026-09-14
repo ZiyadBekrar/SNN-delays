@@ -13,14 +13,14 @@ class Config:
     seed = 0
     dataset_seed = 0
     task_type = "temporal"
-    num_samples = 256
+    num_samples = 4352
     input_size = 16
-    time_window = 32
-    output_size = 4
+    time_window = 64
+    output_size = 8
     input_gain = 1.0
-    hidden_layers = [64]
-    epochs = 100
-    batch_size = 64
+    hidden_layers = [96]
+    epochs = 2000
+    batch_size = 256
     num_workers = 0
     cpu_threads = 1
     readout = "mean"  # mean, sum, or last temporal output
@@ -48,7 +48,7 @@ class Config:
 
     init_rec_weights = "orthogonal"
     rec_delay_init_gain = 0.5
-    use_rec_bias = True
+    use_rec_bias = False
     init_rec_delay = "uniform"
     init_recdel_offset = 0.0
     max_rec_delay = 8.0
@@ -61,7 +61,7 @@ class Config:
     # hybrid_max_synaptic_delay == 0 makes each hybrid byte-for-byte its paired axonal
     # model; > 0 uses a fused dense DCLS module whose init/bias now match the axonal
     # class, so hybrid checkpoints trained before that change will not load.
-    hybrid_max_synaptic_delay = 6  # fixed integer offsets in [0, 12] on both pathways
+    hybrid_max_synaptic_delay = 8 # fixed integer offsets in [0, 12] on both pathways
     hybrid_delay_seed = 123  # independent of dataset and model seed
     round_delays = False
     round_pos_each_epoch = False
