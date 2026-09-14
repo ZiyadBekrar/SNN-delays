@@ -24,6 +24,9 @@ from datetime import datetime
 import json
 from pathlib import Path
 
+import numpy as np
+from scipy.stats import gaussian_kde
+
 from train_mem import ROOT, Config, networks, run, torch, plt
 from delrec.delay_layers import axonal_recdel
 from delrec.networks import dcls_module, learned_delay_parameter
@@ -178,13 +181,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('epochs', 'seed', 'dataset-seed', 'num-samples', 'hybrid-max-synaptic-delay', 'hybrid-delay-seed'):
         parser.add_argument('--' + name, type=int)
+    parser.add_argument('--hybrid-offset-distribution', choices=['uniform', 'gaussian', 'triangular'])
+    parser.add_argument('--hybrid-offset-sigma', type=float)
     parser.add_argument('--task-type', choices=['temporal', 'spatial'])
     parser.add_argument('--hidden-layers', help='Comma-separated widths')
     parser.add_argument('--out', type=Path)
     parser.add_argument('--device', choices=['cpu', 'cuda'], default='cpu')
     args = parser.parse_args()
     config = Config()
-    for key in ('epochs', 'seed', 'dataset_seed', 'num_samples', 'task_type', 'hybrid_max_synaptic_delay', 'hybrid_delay_seed'):
+    for key in ('epochs', 'seed', 'dataset_seed', 'num_samples', 'task_type', 'hybrid_max_synaptic_delay',
+                'hybrid_delay_seed', 'hybrid_offset_distribution', 'hybrid_offset_sigma'):
         if getattr(args, key) is not None:
             setattr(config, key, getattr(args, key))
     if args.hidden_layers:
@@ -196,6 +202,8 @@ def main():
         f'{config.task_type}_seed{config.seed}_{datetime.now():%Y-%m-%d-%H-%M-%S-%f}')
     out.mkdir(parents=True, exist_ok=True)
     models = matched_models(config)
+    initial_delay_values = {label: _model_delay_values(model, config)
+                             for (label, _slug, _class_name), (_cfg, model) in zip(MODELS, models, strict=True)}
     print('Per pathway group: axonal/synaptic initial outputs matched; hybrids keep their own fixed offsets.', flush=True)
     results = {}
     histories = {}
@@ -218,32 +226,100 @@ def main():
                           'fixed random synaptic offsets before training.',
         'results': results,
     }, indent=2))
-    plot_comparison(histories, results, config, out)
+    plot_comparison(histories, results, models, initial_delay_values, config, out)
 
 
-def plot_comparison(histories, results, config, out):
+def _model_delay_values(model, config):
+    """Every learned delay in the model, converted to physical time-step lag.
+
+    Feedforward ``P`` is DCLS's internal, zero-centered kernel-tap position, not
+    the causal delay itself; combined with dcls_module's causal left-padding
+    (``max_feedforward_delay - 1``, see dcls_module.forward), the real lag is
+    ``max_feedforward_delay // 2 - P``, always in ``[0, max_feedforward_delay - 1]``.
+    Recurrent ``recurrent_delays`` is already the physical lag by definition
+    (a spike reaches its targets at ``t + 1 + d``, delay_layers.py).
+    """
+    values = []
+    for m in model.layers:
+        if isinstance(m, dcls_module):
+            p = learned_delay_parameter(m, 'P').detach().flatten()
+            values.append(config.max_feedforward_delay // 2 - p)
+        elif isinstance(m, axonal_recdel):
+            values.append(learned_delay_parameter(m, 'recurrent_delays').detach().flatten())
+    return torch.cat(values) if values else torch.empty(0)
+
+
+def _plot_delay_curve(ax, grid, values, color, linestyle, alpha, fill, label):
+    """One smoothed density curve (Gaussian KDE), or a vertical line for a
+    degenerate (near-zero-spread) delay set."""
+    vals = values.numpy()
+    if vals.size > 1 and vals.std() > 1e-6:
+        density = gaussian_kde(vals)(grid)
+        ax.plot(grid, density, color=color, linewidth=2, linestyle=linestyle, alpha=alpha, label=label)
+        if fill:
+            ax.fill_between(grid, density, color=color, alpha=0.15)
+    else:
+        ax.axvline(vals.mean(), color=color, linewidth=2, linestyle=linestyle, alpha=alpha, label=label)
+
+
+def _plot_delay_distribution(ax, pathway, entries):
+    """Initial (dashed) vs. final (solid, filled) density curve per pathway
+    group (axonal / synaptic / hybrid), overlaid. ``entries`` is
+    ``[(label, param_key, initial_values, final_values), ...]``."""
+    entries = [(label, key, iv, fv) for label, key, iv, fv in entries if fv.numel()]
+    if not entries:
+        ax.axis('off')
+        return
+    all_vals = [v for _, _, iv, fv in entries for v in (iv, fv) if v.numel()]
+    dmin = min(float(v.min()) for v in all_vals)
+    dmax = max(float(v.max()) for v in all_vals)
+    pad = max((dmax - dmin) * 0.1, 0.5)
+    grid = np.linspace(dmin - pad, dmax + pad, 200)
+    for label, key, iv, fv in entries:
+        color = PARAM_COLORS[key]
+        if iv.numel():
+            _plot_delay_curve(ax, grid, iv, color, linestyle='--', alpha=0.6, fill=False,
+                               label=f'{label} init (μ={iv.numpy().mean():.2f})')
+        _plot_delay_curve(ax, grid, fv, color, linestyle='-', alpha=1.0, fill=True,
+                           label=f'{label} final (μ={fv.numpy().mean():.2f})')
+    ax.set(xlabel='Delay (time steps)', ylabel='Density',
+           title=f'{pathway} delay distribution (dashed = init, solid = final)')
+    ax.legend(fontsize=7)
+    ax.grid(alpha=0.25)
+
+
+def plot_comparison(histories, results, models, initial_delay_values, config, out):
     """Render current or saved comparison metrics without rerunning training."""
     colors = [PARAM_COLORS[label.split()[-1].lower()] for label in results]
     styles = [PATHWAY_STYLES[label.split()[0]] for label in results]
-    fig, axes = plt.subplots(1, 3, figsize=(20, 5), layout='constrained')
+    fig, axes = plt.subplots(2, 3, figsize=(20, 10), layout='constrained')
     for (label, history), color, style in zip(histories.items(), colors, styles):
         epochs = [r['epoch'] for r in history]
-        axes[0].plot(epochs, [r['loss'] for r in history], label=label, color=color, linestyle=style)
-        axes[1].plot(epochs, [r['accuracy_percent'] for r in history], label=label, color=color, linestyle=style)
-    axes[0].set(xlabel='Epoch', ylabel='Cross-entropy loss', title='Training loss')
-    axes[1].set(xlabel='Epoch', ylabel='Accuracy (%)', title='Training accuracy', ylim=(0, 105))
-    for axis in axes[:2]:
+        axes[0, 0].plot(epochs, [r['loss'] for r in history], label=label, color=color, linestyle=style)
+        axes[0, 1].plot(epochs, [r['accuracy_percent'] for r in history], label=label, color=color, linestyle=style)
+    axes[0, 0].set(xlabel='Epoch', ylabel='Cross-entropy loss', title='Training loss')
+    axes[0, 1].set(xlabel='Epoch', ylabel='Accuracy (%)', title='Training accuracy', ylim=(0, 105))
+    for axis in axes[0, :2]:
         axis.legend(fontsize=8)
         axis.grid(alpha=0.25)
     values = [r['accuracy_percent'] for r in results.values()]
     labels = [f"{name}\n{result['trainable_parameters']:,} params"
               for name, result in results.items()]
-    bars = axes[2].bar(labels, values, color=colors)
-    axes[2].bar_label(bars, labels=[f'{v:.1f}%' for v in values], padding=4, fontsize=8)
-    axes[2].set(ylabel='Accuracy (%)', title='Final training accuracy', ylim=(0, 110))
-    axes[2].tick_params(axis='x', labelrotation=30, labelsize=8)
-    for tick in axes[2].get_xticklabels():
+    bars = axes[0, 2].bar(labels, values, color=colors)
+    axes[0, 2].bar_label(bars, labels=[f'{v:.1f}%' for v in values], padding=4, fontsize=8)
+    axes[0, 2].set(ylabel='Accuracy (%)', title='Final training accuracy', ylim=(0, 110))
+    axes[0, 2].tick_params(axis='x', labelrotation=30, labelsize=8)
+    for tick in axes[0, 2].get_xticklabels():
         tick.set_ha('right')
+
+    final_delay_values = {label: _model_delay_values(model, config)
+                           for (label, _slug, _class_name), (_cfg, model) in zip(MODELS, models, strict=True)}
+    for pathway_ax, pathway in zip(axes[1, :2], ('Feedforward', 'Recurrent')):
+        entries = [(label, label.split()[-1].lower(), initial_delay_values[label], final_delay_values[label])
+                   for label, _slug, _class_name in MODELS if label.startswith(pathway)]
+        _plot_delay_distribution(pathway_ax, pathway, entries)
+    axes[1, 2].axis('off')
+
     fig.suptitle(f'Delay parametrization x pathway (3 x 2) | {config.task_type}, '
                  f'{config.num_samples} samples, topology {config.input_size} → '
                  + ' → '.join(map(str, config.hidden_layers + [config.output_size])))

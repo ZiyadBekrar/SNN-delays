@@ -678,35 +678,78 @@ def learned_delay_parameter(module, name):
     return getattr(module, name)
 
 
+_HYBRID_OFFSET_DISTRIBUTIONS = ('uniform', 'gaussian', 'triangular')
+
+
 def _hybrid_params(config):
-    """Validate and return ``(maximum, seed)`` for the hybrid delay classes.
+    """Validate and return ``(maximum, seed, distribution, sigma)`` for the hybrid
+    delay classes.
 
     ``maximum`` (``config.hybrid_max_synaptic_delay``, default 4) is the inclusive
     upper bound on the frozen per-synapse offsets; ``maximum == 0`` makes a hybrid
     byte-for-byte its paired axonal model. ``seed`` (``config.hybrid_delay_seed``,
     default 123) seeds the offset draw, independent of the dataset/model seed.
-    ``kernel_count == 1`` is required (one delay per axon/synapse).
+    ``distribution`` (``config.hybrid_offset_distribution``, default ``'uniform'``)
+    selects the sampling law used by ``_draw_offsets``: ``'uniform'``, ``'gaussian'``,
+    or ``'triangular'``. ``sigma`` (``config.hybrid_offset_sigma``) is the standard
+    deviation used only when ``distribution == 'gaussian'``, and must then be a
+    positive number. ``kernel_count == 1`` is required (one delay per axon/synapse).
     """
     maximum = getattr(config, 'hybrid_max_synaptic_delay', 4)
     if int(maximum) != maximum or maximum < 0:
         raise ValueError('hybrid_max_synaptic_delay must be a nonnegative integer')
     if config.kernel_count != 1:
         raise ValueError('hybrid delay models require kernel_count=1 (one delay per axon/synapse).')
-    return int(maximum), getattr(config, 'hybrid_delay_seed', 123)
+    distribution = getattr(config, 'hybrid_offset_distribution', 'uniform')
+    if distribution not in _HYBRID_OFFSET_DISTRIBUTIONS:
+        raise ValueError(
+            f'hybrid_offset_distribution must be one of {_HYBRID_OFFSET_DISTRIBUTIONS}, '
+            f'got {distribution!r}')
+    sigma = getattr(config, 'hybrid_offset_sigma', None)
+    if distribution == 'gaussian' and not (sigma is not None and sigma > 0):
+        raise ValueError("distribution 'gaussian' requires a positive hybrid_offset_sigma")
+    return int(maximum), getattr(config, 'hybrid_delay_seed', 123), distribution, sigma
 
 
-def _draw_offsets(shape, maximum, generator):
+def _draw_offsets(shape, maximum, generator, distribution='uniform', sigma=None):
     """Frozen per-synapse integer offsets in ``[0, maximum]`` (all-zero when maximum == 0).
 
-    ``torch.randint`` treats its first positional arg as ``high`` (exclusive), so the
-    bound is ``maximum + 1``; ``torch.randint(1, shape)`` would mean ``high=1`` (a bug).
+    ``distribution`` selects the sampling law; every draw is then rounded to the
+    integer grid and clamped into ``[0, maximum]`` (the gaussian tails and the
+    rounding of the other two laws could otherwise land just outside it):
+
+      'uniform'    -- discrete uniform over ``{0, ..., maximum}``. ``torch.randint``
+                       treats its first positional arg as ``high`` (exclusive), so the
+                       bound is ``maximum + 1``; ``torch.randint(1, shape)`` would mean
+                       ``high=1`` (a bug).
+      'gaussian'   -- ``Normal(maximum / 2, sigma)``.
+      'triangular' -- ``Triangular(0, maximum, mode=maximum / 2)``, via inverse-CDF
+                       sampling; already inside ``[0, maximum]`` before rounding.
     """
     if maximum == 0:
         return torch.zeros(shape)
-    return torch.randint(maximum + 1, shape, generator=generator).float()
+    if distribution == 'uniform':
+        return torch.randint(maximum + 1, shape, generator=generator).float()
+    if distribution == 'gaussian':
+        center = maximum / 2.0
+        draws = torch.normal(center, float(sigma), size=shape, generator=generator)
+        return draws.round().clamp_(0, maximum)
+    if distribution == 'triangular':
+        # Inverse CDF of Triangular(0, maximum, mode=maximum / 2): the mode sits at
+        # the midpoint, so the two branch fractions are both 1/2.
+        u = torch.rand(shape, generator=generator)
+        below_mode = u < 0.5
+        draws = torch.where(
+            below_mode,
+            maximum * torch.sqrt(u / 2.0),
+            maximum * (1.0 - torch.sqrt((1.0 - u) / 2.0)))
+        return draws.round().clamp_(0, maximum)
+    raise ValueError(
+        f'Unknown distribution {distribution!r} (expected one of {_HYBRID_OFFSET_DISTRIBUTIONS}).')
 
 
-def _reparametrize_feedforward_delay(module, maximum, generator, config, *, freeze_sig):
+def _reparametrize_feedforward_delay(module, maximum, generator, config, *, freeze_sig,
+                                      distribution='uniform', sigma=None):
     """In place: turn a fused dense ``dcls_module`` into the hybrid feedforward delay.
 
     Widen the kernel by ``2 * maximum`` (and ``left_padding`` to match), then tie the
@@ -715,11 +758,11 @@ def _reparametrize_feedforward_delay(module, maximum, generator, config, *, free
     (DCLS ``P`` grows toward the present) and ``position_shift=maximum`` (re-centred so
     all-zero offsets reproduce the original lag). ``freeze_sig`` pins ``SIG`` at
     ``config.siginit`` for the gauss kernel (the ``SNN_axonal_feedforward_delays``
-    policy; the both-pathways axonal model leaves ``SIG`` trainable, so its hybrid
-    passes ``freeze_sig=False``).
+    policy; ``SNN_hybrid_feedforward_delays`` passes ``freeze_sig=True``). ``distribution``
+    / ``sigma`` are forwarded to ``_draw_offsets``.
     """
     from torch.nn.utils import parametrize
-    offsets = _draw_offsets(module.P.shape, maximum, generator)
+    offsets = _draw_offsets(module.P.shape, maximum, generator, distribution, sigma)
     base = module.P[:, :1].detach().clone()
     module.dilated_kernel_size = (config.max_feedforward_delay + 2 * maximum,)
     module.left_padding += 2 * maximum
@@ -733,7 +776,7 @@ def _reparametrize_feedforward_delay(module, maximum, generator, config, *, free
         module.SIG.requires_grad = False
 
 
-def _reparametrize_recurrent_delay(module, maximum, generator):
+def _reparametrize_recurrent_delay(module, maximum, generator, distribution='uniform', sigma=None):
     """In place: tie a ``synaptic_recdel``'s (N, N) ``recurrent_delays`` to one learned
     (N,) leaf plus the frozen (N, N) offsets.
 
@@ -742,9 +785,10 @@ def _reparametrize_recurrent_delay(module, maximum, generator):
     Triton path (``delrec.triton_kernels.synaptic_hybrid``) when that is usable,
     to the spike-sparse event-driven kernel when the regime is unsupported, and to
     the pure-torch ``v2`` scan on CPU or if the fused kernel ever fails at runtime.
+    ``distribution`` / ``sigma`` are forwarded to ``_draw_offsets``.
     """
     from torch.nn.utils import parametrize
-    offsets = _draw_offsets(module.recurrent_delays.shape, maximum, generator)
+    offsets = _draw_offsets(module.recurrent_delays.shape, maximum, generator, distribution, sigma)
     base = module.recurrent_delays[0].detach().clone()
     parametrize.register_parametrization(module, 'recurrent_delays',
         _AxonalWithFixedOffsets(offsets), unsafe=True)
@@ -773,10 +817,12 @@ class SNN_hybrid_feedforward_delays(SNN_axonal_feedforward_delays):
     Config knobs (shared with the other hybrids):
       hybrid_max_synaptic_delay : inclusive upper bound on delta_ij, integer >= 0 (default 4).
       hybrid_delay_seed         : RNG seed for the fixed offsets (default 123).
+      hybrid_offset_distribution: 'uniform' (default), 'gaussian', or 'triangular'.
+      hybrid_offset_sigma       : standard deviation, required when distribution is 'gaussian'.
     """
 
     def __init__(self, config):
-        self._hybrid_max, seed = _hybrid_params(config)
+        self._hybrid_max, seed, distribution, sigma = _hybrid_params(config)
         super().__init__(config)
         if self._hybrid_max == 0:
             return
@@ -787,7 +833,8 @@ class SNN_hybrid_feedforward_delays(SNN_axonal_feedforward_delays):
         for module in self.layers:
             if isinstance(module, dcls_module):
                 _reparametrize_feedforward_delay(module, maximum, generator, config,
-                                                 freeze_sig=True)
+                                                 freeze_sig=True,
+                                                 distribution=distribution, sigma=sigma)
 
     def _delay_stage(self, in_dim, out_dim, delayed):
         if self._hybrid_max == 0 or not delayed:
@@ -857,10 +904,12 @@ class SNN_recurrent_hybrid_delays(SNN_axonal_recurrent_delays):
     Config knobs (shared with the other hybrids):
       hybrid_max_synaptic_delay : inclusive upper bound on delta_ij, integer >= 0 (default 4).
       hybrid_delay_seed         : RNG seed for the fixed offsets (default 123).
+      hybrid_offset_distribution: 'uniform' (default), 'gaussian', or 'triangular'.
+      hybrid_offset_sigma       : standard deviation, required when distribution is 'gaussian'.
     """
 
     def __init__(self, config):
-        maximum, seed = _hybrid_params(config)
+        maximum, seed, distribution, sigma = _hybrid_params(config)
         self._hybrid_max = maximum
         if maximum == 0:
             super().__init__(config)
@@ -869,7 +918,7 @@ class SNN_recurrent_hybrid_delays(SNN_axonal_recurrent_delays):
         generator = torch.Generator().manual_seed(seed)
         for module in self.layers:
             if isinstance(module, axonal_recdel):   # a synaptic_recdel instance
-                _reparametrize_recurrent_delay(module, maximum, generator)
+                _reparametrize_recurrent_delay(module, maximum, generator, distribution, sigma)
 
     def clamp_delays(self):
         if self._hybrid_max == 0:

@@ -123,11 +123,18 @@ mandatory one-step feedback lag. Offsets are drawn once **before training**,
 allowing the learned weights and axonal delays to adapt to them. Adding random
 offsets after training would instead measure robustness to a timing perturbation.
 
-`hybrid_max_synaptic_delay = 4` samples integer offsets uniformly from 0 through
-4 time steps. `hybrid_delay_seed = 123` controls this draw independently of the
-dataset and weight seeds. Override them with `--hybrid-max-synaptic-delay` and
-`--hybrid-delay-seed`. Offsets remain fixed throughout training and evaluation
-and are saved as buffers in `last.pth`; they are not optimizer parameters.
+`hybrid_max_synaptic_delay = 4` bounds the integer offsets to `[0, 4]`.
+`hybrid_delay_seed = 123` controls the draw independently of the dataset and
+weight seeds. `hybrid_offset_distribution` selects the sampling law within that
+range: `'uniform'` (default, every integer equally likely), `'gaussian'`
+(`Normal(hybrid_max_synaptic_delay / 2, hybrid_offset_sigma)`, rounded and
+clamped into range), or `'triangular'` (peaked at `hybrid_max_synaptic_delay / 2`,
+falling off linearly to 0 at both ends). `hybrid_offset_sigma` is required, and
+only used, when the distribution is `'gaussian'`. Override any of these on
+`compare_mem_delays.py` with `--hybrid-max-synaptic-delay`, `--hybrid-delay-seed`,
+`--hybrid-offset-distribution`, and `--hybrid-offset-sigma`. Offsets remain fixed
+throughout training and evaluation and are saved as buffers in `last.pth`; they
+are not optimizer parameters.
 
 Each hybrid learns exactly as many delays as its paired axonal model (one per
 source neuron), and additionally stores one fixed offset per connection (the

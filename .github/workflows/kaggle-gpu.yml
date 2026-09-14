@@ -20,7 +20,7 @@ concurrency:
 jobs:
   run-on-kaggle:
     # Kill switch: skip the whole job when the repo variable KAGGLE_GPU is "false".
-    if: vars.KAGGLE_GPU != 'true'
+    if: vars.KAGGLE_GPU != 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
