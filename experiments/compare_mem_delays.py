@@ -7,12 +7,13 @@ All measurements use training data. Six models, each a delay parametrization
   synaptic  one learned delay per connection
   hybrid    learned axonal delay + a fixed random per-synapse integer offset
 
-All six are seeded from ONE global reference: a both-pathways axonal master is
-built once, and its feedforward weights/biases, feedforward axonal delays,
-recurrent weights/biases and recurrent axonal delays are injected into every
-model. Within each pathway group the axonal and synaptic models therefore start
-from identical initial outputs (asserted); the hybrids keep their own fixed
-random offsets, so they start from different effective delays by design.
+All six are seeded from ONE global reference: ``generate_matched_parameters``
+builds one RNG-consistent set of feedforward weights/biases, feedforward axonal
+delays, recurrent weights/biases and recurrent axonal delays, which are then
+injected into every model. Within each pathway group the axonal and synaptic
+models therefore start from identical initial outputs (asserted); the hybrids
+keep their own fixed random offsets, so they start from different effective
+delays by design.
 
 Run: .venv/bin/python experiments/compare_mem_delays.py
 """
@@ -54,26 +55,48 @@ PARAM_COLORS = {'axonal': 'tab:blue', 'synaptic': 'tab:orange', 'hybrid': 'tab:g
 PATHWAY_STYLES = {'Feedforward': '-', 'Recurrent': '--'}
 
 
-def _reference_parameters(master):
-    """Canonical tensors read off the both-pathways axonal master, in depth order.
+def generate_matched_parameters(config):
+    """Build one RNG-consistent set of feedforward + recurrent weights/delays.
 
-    ``ff_w`` / ``ff_b`` are one entry per feedforward projection (the trainable
-    Linear); ``ff_delay`` is the matching per-source axonal delay lifted from the
-    depthwise DCLS filter, shape (in_channels, kernel_count); ``rec_*`` are one
-    entry per recurrent layer.
+    This is the shared reference every matched model is injected from: for each
+    feedforward projection (one per hidden layer plus the output), a depthwise
+    unit-weight delay filter (one learned axonal delay per source neuron, ``P``
+    uniform-initialized and clamped like ``SNN_axonal_feedforward_delays``) followed
+    by a plain ``nn.Linear`` projection; for each hidden layer, an ``axonal_recdel``
+    recurrent layer (self-initializing its own weights/bias/delays). Mirrors what a
+    both-pathways axonal model would build, without needing that network class.
+
+    ``ff_w`` / ``ff_b`` / ``ff_delay`` (shape (in_channels, kernel_count)) are one
+    entry per feedforward projection, in depth order; ``rec_*`` are one entry per
+    recurrent layer (every hidden layer, never the output).
     """
+    if config.kernel_count != 1:
+        raise ValueError('matched_models requires kernel_count=1 (one delay per axon/synapse).')
+
     canon = {k: [] for k in ('ff_w', 'ff_b', 'ff_delay', 'rec_w', 'rec_b', 'rec_delay', 'rec_p_spread')}
-    for m in master.layers:
-        if isinstance(m, dcls_module) and m.weight.shape[1] == 1:      # depthwise delay filter
-            canon['ff_delay'].append(m.P.detach()[0, :, 0, :].clone())
-        elif isinstance(m, torch.nn.Linear):                          # feedforward projection weight
-            canon['ff_w'].append(m.weight.detach().clone())
-            canon['ff_b'].append(None if m.bias is None else m.bias.detach().clone())
-        elif isinstance(m, axonal_recdel):
-            canon['rec_w'].append(m.recurrent_weights.detach().clone())
-            canon['rec_b'].append(m.recurrent_bias.detach().clone() if getattr(m, 'use_rec_bias', False) else None)
-            canon['rec_delay'].append(learned_delay_parameter(m, 'recurrent_delays').detach().clone())
-            canon['rec_p_spread'].append(m.p_spread.detach().clone() if hasattr(m, 'p_spread') else None)
+    dim = config.input_size
+    for idx, out_dim in enumerate(list(config.hidden_layers) + [config.output_size]):
+        delay_config = deepcopy(config)
+        delay_config.bias = False
+        delay = dcls_module(delay_config, in_channels=dim, out_channels=dim, groups=dim)
+        torch.nn.init.constant_(delay.weight, 1.0)
+        torch.nn.init.uniform_(delay.P, a=config.init_pos_a, b=config.init_pos_b)
+        delay.clamp_parameters()
+        if config.DCLSversion == 'gauss':
+            torch.nn.init.constant_(delay.SIG, config.siginit)
+        canon['ff_delay'].append(delay.P.detach()[0, :, 0, :].clone())
+
+        proj = torch.nn.Linear(dim, out_dim, bias=config.bias)
+        canon['ff_w'].append(proj.weight.detach().clone())
+        canon['ff_b'].append(proj.bias.detach().clone() if proj.bias is not None else None)
+
+        if idx < len(config.hidden_layers):        # a recurrent layer follows every hidden layer
+            rec = axonal_recdel(config, out_dim, config.neuron_module)
+            canon['rec_w'].append(rec.recurrent_weights.detach().clone())
+            canon['rec_b'].append(rec.recurrent_bias.detach().clone() if rec.use_rec_bias else None)
+            canon['rec_delay'].append(rec.recurrent_delays.detach().clone())
+            canon['rec_p_spread'].append(rec.p_spread.detach().clone() if rec.use_sig_p else None)
+        dim = out_dim
     return canon
 
 
@@ -116,17 +139,16 @@ def _inject(model, canon):
 
 
 def matched_models(config):
-    """Build the six models, all seeded from one global reference master."""
+    """Build the six models, all seeded from one global reference."""
     config = deepcopy(config)
     assert not config.no_delay_in_first_layer and not config.no_delay_in_last_layer, \
-        'the reference master needs a delay filter on every feedforward projection'
-    # The recurrent-only models honour this flag; the axonal master ignores it. Force
-    # recurrence in every hidden layer so the recurrent models match the master.
+        'the reference needs a delay filter on every feedforward projection'
+    # The recurrent-only models honour this flag; generate_matched_parameters ignores
+    # it. Force recurrence in every hidden layer so they match the reference.
     config.no_recurrence_in_last_layer = False
 
     seed_everything(config.seed)
-    master = getattr(networks, 'SNN_axonal_recurrent_and_feedforward_delays')(deepcopy(config))
-    canon = _reference_parameters(master)
+    canon = generate_matched_parameters(config)
 
     built = {}
     for label, _slug, class_name in MODELS:
