@@ -9,7 +9,7 @@ from spikingjelly.activation_based import neuron, surrogate
 
 class Config:
     dataset = "MEM"
-    model = "SNN_recurrent_and_feedforward_delays"
+    model = "SNN_synaptic_feedforward_delays"
     seed = 0
     dataset_seed = 0
     task_type = "temporal"

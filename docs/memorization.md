@@ -1,6 +1,8 @@
 # Spike memorization
 
-Run the combined recurrent/feedforward delay SNN using `configs/perf_MEM.py`:
+Run the memorization SNN configured in `configs/perf_MEM.py` (`model` there selects
+the network class, e.g. a synaptic-feedforward-delay or axonal-recurrent-delay
+network; see `src/delrec/networks.py` for the full list):
 
 ```bash
 .venv/bin/python experiments/train_mem.py
@@ -56,42 +58,53 @@ The final checkpoint is used directly; there is no validation-based selection.
 Neuron and dropout states are reset between batches. Training accuracy quantifies
 memorization of these samples, not generalization to new random labels.
 
-## Axonal, synaptic and hybrid delays on both pathways
+## Delay parametrization x pathway (axonal / synaptic / hybrid, feedforward / recurrent)
 
 ```bash
 .venv/bin/python experiments/compare_mem_delays.py
 ```
 
-This trains three models with the same topology from `perf_MEM.py`:
+This trains six single-pathway models with the same topology from `perf_MEM.py`,
+crossing delay parametrization with pathway:
 
-- `SNN_axonal_recurrent_and_feedforward_delays`: a depthwise unit-weight,
-  bias-free delay filter before each feedforward Linear, plus one recurrent
-  delay per source neuron.
-- `SNN_synaptic_recurrent_and_feedforward_delays`: dense DCLS feedforward
-  projections and synaptic recurrent layers, with one delay per connection.
-- `SNN_hybrid_recurrent_and_feedforward_delays`: one learned axonal delay per
-  source neuron plus fixed random delays per connection, on both pathways.
+|            | Feedforward only                     | Recurrent only                  |
+|------------|---------------------------------------|----------------------------------|
+| axonal     | `SNN_axonal_feedforward_delays`       | `SNN_axonal_recurrent_delays`    |
+| synaptic   | `SNN_synaptic_feedforward_delays`     | `SNN_synaptic_recurrent_delays`  |
+| hybrid     | `SNN_hybrid_feedforward_delays`       | `SNN_recurrent_hybrid_delays`    |
 
-All three use the same hidden order: delayed projection, dropout, recurrent LIF,
-spike recorder, optional batch normalization. All three include delays in the output
-projection by default. These paired variants require `kernel_count=1` and
-apply recurrence to every hidden layer, matching the original combined model.
+- axonal: one learned delay per source neuron, shared by its connections.
+- synaptic: one learned delay per connection.
+- hybrid: the axonal model's learned per-source delay plus a fixed random
+  per-connection integer offset, drawn once and never trained.
 
-The comparison uses the same dataset, minibatch order, settings, initial
-connection weights and biases. Synaptic delays start as broadcast copies of
-axonal delays and then learn independently. Axonal and synaptic initial outputs are checked for
-numerical equivalence before training. The hybrid shares their weights, biases
-and base axonal delays, but its fixed offsets change the initial outputs. Gaussian widths use the same schedule.
-The neuron counts and connectivity match, but parameter counts differ by design:
-with the default 16 → 64 → 4 topology, the axonal model has 80 feedforward and
-64 recurrent delay parameters; the synaptic model has 1,280 feedforward and
-4,096 recurrent delay parameters.
+All six require `kernel_count=1` and apply recurrence to every hidden layer
+(feedforward-pathway models never have recurrence to begin with; recurrent-pathway
+models get it forced on regardless of `no_recurrence_in_last_layer`), so weights
+and delays line up one-to-one across the comparison.
+
+All six are seeded from one shared reference (`generate_matched_parameters` in
+`compare_mem_delays.py`): the same feedforward weights/biases, feedforward axonal
+delays, recurrent weights/biases and recurrent axonal delays are injected into
+every model, using the same dataset, minibatch order and settings. Within each
+pathway, axonal and synaptic initial outputs are checked for numerical
+equivalence before training (synaptic delays start as broadcast copies of the
+axonal ones, then learn independently). The hybrids share the same weights,
+biases and base axonal delays, but their fixed offsets change the initial
+outputs. Gaussian widths use the same schedule throughout.
+
+The neuron counts and connectivity match across a pathway's three models, but
+parameter counts differ by design: axonal learns one delay per source neuron,
+synaptic one per connection, and hybrid keeps the axonal count while adding a
+fixed (non-trainable) offset per connection. `comparison.json` reports the exact
+counts for each run's topology.
 
 Each model has its own complete run directory under
 `exp/MEM/delay_comparison/<run>/`. The parent contains `comparison.json` and
-`delay_comparison.png` / `.pdf`, showing three loss curves, three accuracy curves,
-and three final training accuracy bars. All measurements use the training set.
-This is a single-seed comparison, not an estimate of variation across seeds.
+`delay_comparison.png` / `.pdf`, showing six loss curves, six accuracy curves,
+and six final training accuracy bars (colour = parametrization, line style =
+pathway). All measurements use the training set. This is a single-seed
+comparison, not an estimate of variation across seeds.
 
 Supported overrides include `--epochs`, `--seed`, `--dataset-seed`,
 `--num-samples`, `--task-type`, `--hidden-layers`, `--device cpu|cuda`, and `--out`.
@@ -101,13 +114,14 @@ For example:
 .venv/bin/python experiments/compare_mem_delays.py --task-type spatial --seed 1
 ```
 
-### Fixed random synaptic delays in the hybrid
+### Fixed random synaptic delays in the hybrids
 
-The effective physical delay is `d[i,j] = axonal[j] + offset[i,j]` on both
-feedforward and recurrent pathways. Recurrence also retains its usual mandatory
-one-step feedback lag. Offsets are drawn once **before training**, allowing the
-learned weights and axonal delays to adapt to them. Adding random offsets after
-training would instead measure robustness to a timing perturbation.
+The effective physical delay is `d[i,j] = axonal[j] + offset[i,j]`, on whichever
+pathway the hybrid model covers (`SNN_hybrid_feedforward_delays` for feedforward,
+`SNN_recurrent_hybrid_delays` for recurrent). Recurrence also retains its usual
+mandatory one-step feedback lag. Offsets are drawn once **before training**,
+allowing the learned weights and axonal delays to adapt to them. Adding random
+offsets after training would instead measure robustness to a timing perturbation.
 
 `hybrid_max_synaptic_delay = 4` samples integer offsets uniformly from 0 through
 4 time steps. `hybrid_delay_seed = 123` controls this draw independently of the
@@ -115,21 +129,24 @@ dataset and weight seeds. Override them with `--hybrid-max-synaptic-delay` and
 `--hybrid-delay-seed`. Offsets remain fixed throughout training and evaluation
 and are saved as buffers in `last.pth`; they are not optimizer parameters.
 
-The hybrid learns 80 feedforward and 64 recurrent delays for the default topology,
-just like the axonal model, and stores 5,376 additional fixed offsets. It uses
-synaptic computations to apply those distinct offsets, so equal learned parameter
-counts do not imply equal runtime or storage costs.
+Each hybrid learns exactly as many delays as its paired axonal model (one per
+source neuron), and additionally stores one fixed offset per connection (the
+`comparison.json`/`final_*_delay_parameters` and `fixed_synaptic_offsets` fields
+report the exact counts for a given topology). It uses synaptic computations to
+apply those distinct offsets, so equal learned parameter counts do not imply
+equal runtime or storage costs.
 
 DCLS positions run in the opposite direction from transmission delays. The
-implementation subtracts fixed offsets from those positions and extends the
-feedforward kernel window to accommodate the extra lag without clipping it.
-The original learnable axonal position range is retained. Recurrent axonal
-parameters are clamped nonnegative; their offsets are added afterwards.
-Gaussian filtering remains the same type of smoothing, evaluated on the extended
-window. The hybrid's longer effective delays are part of this experimental
-condition; the experiment does not match maximum effective delays across models.
+feedforward hybrid's implementation subtracts fixed offsets from those positions
+and extends the feedforward kernel window to accommodate the extra lag without
+clipping it; the original learnable axonal position range is retained. The
+recurrent hybrid's axonal delays are clamped nonnegative; their offsets are
+added afterwards. Gaussian filtering remains the same type of smoothing,
+evaluated on the extended window where applicable. The hybrids' longer effective
+delays are part of this experimental condition; the experiment does not match
+maximum effective delays across models.
 
 The comparison reads the current `perf_MEM.py`, so reruns may differ from older
-results if neuron parameters have been edited. All three combined architectures
+results if neuron parameters have been edited. The recurrent-pathway models
 apply recurrence to every hidden layer, even when `no_recurrence_in_last_layer`
-is set; this preserves their existing topology.
+is set, so they stay comparable to their feedforward-pathway counterparts.
