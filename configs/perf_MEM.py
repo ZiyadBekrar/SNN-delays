@@ -13,19 +13,19 @@ class Config:
     seed = 0
     dataset_seed = 0
     task_type = "temporal"
-    num_samples = 4352
+    num_samples = 256
     input_size = 16
     time_window = 32
-    output_size = 8
+    output_size = 4
     input_gain = 1.0
     hidden_layers = [64]
-    epochs = 2000
-    batch_size = 256
+    epochs = 100
+    batch_size = 64
     num_workers = 0
     cpu_threads = 1
     readout = "mean"  # mean, sum, or last temporal output
 
-    bias = True
+    bias = False
     use_batch_norm = False
     feedforward_dropout_rate = 0.0
     recurrent_dropout_rate = 0.0
@@ -33,7 +33,7 @@ class Config:
     init_dcls_weights = "default"
     no_delay_in_first_layer = False
     no_delay_in_last_layer = False
-    no_recurrence_in_last_layer = True
+    no_recurrence_in_last_layer = False
 
     neuron_module = neuron.LIFNode
     surrogate_function = surrogate.ATan(alpha=2.0)
@@ -61,7 +61,7 @@ class Config:
     # hybrid_max_synaptic_delay == 0 makes each hybrid byte-for-byte its paired axonal
     # model; > 0 uses a fused dense DCLS module whose init/bias now match the axonal
     # class, so hybrid checkpoints trained before that change will not load.
-    hybrid_max_synaptic_delay = 12  # fixed integer offsets in [0, 12] on both pathways
+    hybrid_max_synaptic_delay = 6  # fixed integer offsets in [0, 12] on both pathways
     hybrid_delay_seed = 123  # independent of dataset and model seed
     round_delays = False
     round_pos_each_epoch = False
