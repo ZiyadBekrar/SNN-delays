@@ -272,7 +272,7 @@ def _model_delay_values(model, config):
             values.append(m.dilated_kernel_size[0] // 2 - p)
         elif isinstance(m, axonal_recdel):
             values.append(m.recurrent_delays.detach().flatten())
-    return torch.cat(values) if values else torch.empty(0)
+    return torch.cat(values).cpu() if values else torch.empty(0)
 
 
 def _plot_delay_curve(ax, grid, values, color, linestyle, alpha, fill, label):
