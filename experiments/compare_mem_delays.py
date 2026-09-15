@@ -29,7 +29,7 @@ from scipy.stats import gaussian_kde
 
 from train_mem import ROOT, Config, networks, run, torch, plt
 from delrec.delay_layers import axonal_recdel
-from delrec.networks import dcls_module, learned_delay_parameter
+from delrec.networks import dcls_module, hybrid_centered_base, learned_delay_parameter
 from delrec.training.mem import set_epoch
 from delrec.utils import reset_states, seed_everything
 
@@ -103,8 +103,17 @@ def generate_matched_parameters(config):
     return canon
 
 
-def _inject(model, canon):
-    """Overwrite a model's shared components with the reference tensors."""
+def _inject(model, canon, config):
+    """Overwrite a model's shared components with the reference tensors.
+
+    A hybrid's injected base delay is re-centered via
+    ``networks.hybrid_centered_base`` (same helper the hybrid classes use on
+    their own base at construction time) when
+    ``config.hybrid_base_centering == 'centered'``, so its effective
+    (post-offset) mean delay matches the paired axonal/synaptic model's instead
+    of sitting ``hybrid_max_synaptic_delay / 2`` above it.
+    """
+    from torch.nn.utils import parametrize
     fi = ri = 0
     with torch.no_grad():
         for m in model.layers:
@@ -120,7 +129,10 @@ def _inject(model, canon):
                 if m.bias is not None and canon['ff_b'][fi] is not None:
                     m.bias.copy_(canon['ff_b'][fi])
                 leaf = learned_delay_parameter(m, 'P')                # (1, O, in, k); O==1 for hybrid
-                leaf.copy_(canon['ff_delay'][fi]
+                base = canon['ff_delay'][fi]
+                if parametrize.is_parametrized(m, 'P'):
+                    base = hybrid_centered_base(base, config, pathway='feedforward')
+                leaf.copy_(base
                            .view(1, 1, m.in_channels, m.kernel_count)
                            .expand(1, leaf.shape[1], m.in_channels, m.kernel_count))
                 fi += 1
@@ -135,6 +147,8 @@ def _inject(model, canon):
                     m.recurrent_bias.copy_(canon['rec_b'][ri])
                 leaf = learned_delay_parameter(m, 'recurrent_delays')  # (N,) axonal/hybrid, (N, N) synaptic
                 base = canon['rec_delay'][ri]
+                if parametrize.is_parametrized(m, 'recurrent_delays'):
+                    base = hybrid_centered_base(base, config, pathway='recurrent')
                 leaf.copy_(base if leaf.dim() == 1 else base[None, :].expand_as(leaf))
                 if hasattr(m, 'p_spread') and canon['rec_p_spread'][ri] is not None:
                     m.p_spread.copy_(canon['rec_p_spread'][ri])
@@ -158,7 +172,7 @@ def matched_models(config):
         cfg = deepcopy(config)
         cfg.model = class_name
         model = getattr(networks, class_name)(cfg)
-        _inject(model, canon)
+        _inject(model, canon, config)
         set_epoch(model, cfg, 0)
         model.eval()
         built[label] = (cfg, model)
@@ -183,6 +197,9 @@ def main():
         parser.add_argument('--' + name, type=int)
     parser.add_argument('--hybrid-offset-distribution', choices=['uniform', 'gaussian', 'triangular'])
     parser.add_argument('--hybrid-offset-sigma', type=float)
+    parser.add_argument('--hybrid-base-centering', choices=['normal', 'centered'],
+                         help="'centered' shifts a hybrid's injected base so its effective mean "
+                              "delay matches the paired axonal/synaptic model's (see configs).")
     parser.add_argument('--task-type', choices=['temporal', 'spatial'])
     parser.add_argument('--hidden-layers', help='Comma-separated widths')
     parser.add_argument('--out', type=Path)
@@ -190,7 +207,8 @@ def main():
     args = parser.parse_args()
     config = Config()
     for key in ('epochs', 'seed', 'dataset_seed', 'num_samples', 'task_type', 'hybrid_max_synaptic_delay',
-                'hybrid_delay_seed', 'hybrid_offset_distribution', 'hybrid_offset_sigma'):
+                'hybrid_delay_seed', 'hybrid_offset_distribution', 'hybrid_offset_sigma',
+                'hybrid_base_centering'):
         if getattr(args, key) is not None:
             setattr(config, key, getattr(args, key))
     if args.hidden_layers:
@@ -223,7 +241,8 @@ def main():
                           '(feedforward weights/biases and axonal delays, recurrent '
                           'weights/biases and axonal delays). Within each pathway group '
                           'axonal and synaptic start from identical outputs; hybrids add '
-                          'fixed random synaptic offsets before training.',
+                          'fixed random synaptic offsets before training '
+                          f'(hybrid_base_centering={config.hybrid_base_centering!r}).',
         'results': results,
     }, indent=2))
     plot_comparison(histories, results, models, initial_delay_values, config, out)
@@ -234,18 +253,25 @@ def _model_delay_values(model, config):
 
     Feedforward ``P`` is DCLS's internal, zero-centered kernel-tap position, not
     the causal delay itself; combined with dcls_module's causal left-padding
-    (``max_feedforward_delay - 1``, see dcls_module.forward), the real lag is
-    ``max_feedforward_delay // 2 - P``, always in ``[0, max_feedforward_delay - 1]``.
+    (``dilated_kernel_size - 1``, see dcls_module.forward), the real lag is
+    ``dilated_kernel_size // 2 - P``, always in ``[0, dilated_kernel_size - 1]``.
+    Read the module's own ``dilated_kernel_size`` rather than
+    ``config.max_feedforward_delay``: a hybrid's kernel is widened by
+    ``2 * hybrid_max_synaptic_delay`` to make room for its frozen per-synapse
+    offset (``_reparametrize_feedforward_delay``), so the two diverge there.
     Recurrent ``recurrent_delays`` is already the physical lag by definition
     (a spike reaches its targets at ``t + 1 + d``, delay_layers.py).
     """
     values = []
     for m in model.layers:
         if isinstance(m, dcls_module):
-            p = learned_delay_parameter(m, 'P').detach().flatten()
-            values.append(config.max_feedforward_delay // 2 - p)
+            # m.P (not learned_delay_parameter, which strips a hybrid's frozen
+            # per-synapse offset) is the effective position actually used in the
+            # forward pass.
+            p = m.P.detach().flatten()
+            values.append(m.dilated_kernel_size[0] // 2 - p)
         elif isinstance(m, axonal_recdel):
-            values.append(learned_delay_parameter(m, 'recurrent_delays').detach().flatten())
+            values.append(m.recurrent_delays.detach().flatten())
     return torch.cat(values) if values else torch.empty(0)
 
 

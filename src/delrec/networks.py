@@ -748,6 +748,32 @@ def _draw_offsets(shape, maximum, generator, distribution='uniform', sigma=None)
         f'Unknown distribution {distribution!r} (expected one of {_HYBRID_OFFSET_DISTRIBUTIONS}).')
 
 
+def hybrid_centered_base(base, config, *, pathway):
+    """Shift a hybrid's base delay so its effective (post-offset) mean delay
+    equals ``base`` itself, canceling the bias the one-sided offsets would
+    otherwise introduce (``_draw_offsets`` draws from ``[0, maximum]``, mean
+    ``maximum / 2``).
+
+    A no-op unless ``config.hybrid_base_centering == 'centered'`` (the default,
+    ``'normal'``, leaves the effective mean sitting ``hybrid_max_synaptic_delay
+    / 2`` above ``base``). The correction's sign is pathway-dependent: on the
+    feedforward path DCLS's position ``P`` runs *opposite* the real delay
+    (larger ``P`` == smaller lag; see ``_reparametrize_feedforward_delay`` and
+    compare_mem_delays.py's ``_model_delay_values``), so the base is shifted up;
+    on the recurrent path the delay tensor is the lag directly, so the base is
+    shifted down. ``pathway`` is ``'feedforward'`` or ``'recurrent'``.
+
+    Used both when a hybrid class reparametrizes its own freshly-initialized
+    base (below) and by compare_mem_delays.py, which re-centers an externally
+    injected base the same way so hybrids stay comparable to their paired
+    axonal/synaptic model.
+    """
+    if getattr(config, 'hybrid_base_centering', 'normal') != 'centered':
+        return base
+    half = getattr(config, 'hybrid_max_synaptic_delay', 4) / 2.0
+    return base + half if pathway == 'feedforward' else base - half
+
+
 def _reparametrize_feedforward_delay(module, maximum, generator, config, *, freeze_sig,
                                       distribution='uniform', sigma=None):
     """In place: turn a fused dense ``dcls_module`` into the hybrid feedforward delay.
@@ -759,11 +785,12 @@ def _reparametrize_feedforward_delay(module, maximum, generator, config, *, free
     all-zero offsets reproduce the original lag). ``freeze_sig`` pins ``SIG`` at
     ``config.siginit`` for the gauss kernel (the ``SNN_axonal_feedforward_delays``
     policy; ``SNN_hybrid_feedforward_delays`` passes ``freeze_sig=True``). ``distribution``
-    / ``sigma`` are forwarded to ``_draw_offsets``.
+    / ``sigma`` are forwarded to ``_draw_offsets``; the base is re-centered per
+    ``config.hybrid_base_centering`` via ``hybrid_centered_base``.
     """
     from torch.nn.utils import parametrize
     offsets = _draw_offsets(module.P.shape, maximum, generator, distribution, sigma)
-    base = module.P[:, :1].detach().clone()
+    base = hybrid_centered_base(module.P[:, :1].detach().clone(), config, pathway='feedforward')
     module.dilated_kernel_size = (config.max_feedforward_delay + 2 * maximum,)
     module.left_padding += 2 * maximum
     module.DCK = type(module.DCK)(module.out_channels, module.in_channels,
@@ -776,7 +803,7 @@ def _reparametrize_feedforward_delay(module, maximum, generator, config, *, free
         module.SIG.requires_grad = False
 
 
-def _reparametrize_recurrent_delay(module, maximum, generator, distribution='uniform', sigma=None):
+def _reparametrize_recurrent_delay(module, maximum, generator, config, distribution='uniform', sigma=None):
     """In place: tie a ``synaptic_recdel``'s (N, N) ``recurrent_delays`` to one learned
     (N,) leaf plus the frozen (N, N) offsets.
 
@@ -785,11 +812,12 @@ def _reparametrize_recurrent_delay(module, maximum, generator, distribution='uni
     Triton path (``delrec.triton_kernels.synaptic_hybrid``) when that is usable,
     to the spike-sparse event-driven kernel when the regime is unsupported, and to
     the pure-torch ``v2`` scan on CPU or if the fused kernel ever fails at runtime.
-    ``distribution`` / ``sigma`` are forwarded to ``_draw_offsets``.
+    ``distribution`` / ``sigma`` are forwarded to ``_draw_offsets``; the base is
+    re-centered per ``config.hybrid_base_centering`` via ``hybrid_centered_base``.
     """
     from torch.nn.utils import parametrize
     offsets = _draw_offsets(module.recurrent_delays.shape, maximum, generator, distribution, sigma)
-    base = module.recurrent_delays[0].detach().clone()
+    base = hybrid_centered_base(module.recurrent_delays[0].detach().clone(), config, pathway='recurrent')
     parametrize.register_parametrization(module, 'recurrent_delays',
         _AxonalWithFixedOffsets(offsets), unsafe=True)
     module.parametrizations.recurrent_delays.original = torch.nn.Parameter(base)
@@ -819,6 +847,10 @@ class SNN_hybrid_feedforward_delays(SNN_axonal_feedforward_delays):
       hybrid_delay_seed         : RNG seed for the fixed offsets (default 123).
       hybrid_offset_distribution: 'uniform' (default), 'gaussian', or 'triangular'.
       hybrid_offset_sigma       : standard deviation, required when distribution is 'gaussian'.
+      hybrid_base_centering     : 'normal' (default) leaves the base as initialized/injected;
+                                   'centered' shifts it (see hybrid_centered_base) so the
+                                   effective post-offset mean delay matches what the base alone
+                                   (i.e. the paired axonal/synaptic model) would give.
     """
 
     def __init__(self, config):
@@ -906,6 +938,10 @@ class SNN_recurrent_hybrid_delays(SNN_axonal_recurrent_delays):
       hybrid_delay_seed         : RNG seed for the fixed offsets (default 123).
       hybrid_offset_distribution: 'uniform' (default), 'gaussian', or 'triangular'.
       hybrid_offset_sigma       : standard deviation, required when distribution is 'gaussian'.
+      hybrid_base_centering     : 'normal' (default) leaves the base as initialized/injected;
+                                   'centered' shifts it (see hybrid_centered_base) so the
+                                   effective post-offset mean delay matches what the base alone
+                                   (i.e. the paired axonal/synaptic model) would give.
     """
 
     def __init__(self, config):
@@ -918,7 +954,7 @@ class SNN_recurrent_hybrid_delays(SNN_axonal_recurrent_delays):
         generator = torch.Generator().manual_seed(seed)
         for module in self.layers:
             if isinstance(module, axonal_recdel):   # a synaptic_recdel instance
-                _reparametrize_recurrent_delay(module, maximum, generator, distribution, sigma)
+                _reparametrize_recurrent_delay(module, maximum, generator, config, distribution, sigma)
 
     def clamp_delays(self):
         if self._hybrid_max == 0:

@@ -13,14 +13,14 @@ class Config:
     seed = 0
     dataset_seed = 0
     task_type = "temporal"
-    num_samples = 256
+    num_samples = 4352
     input_size = 16
-    time_window = 32
-    output_size = 4
+    time_window = 64
+    output_size = 8
     input_gain = 1.0
-    hidden_layers = [64]
-    epochs = 100
-    batch_size = 64
+    hidden_layers = [96]
+    epochs = 2000
+    batch_size = 256
     num_workers = 0
     cpu_threads = 1
     readout = "mean"  # mean, sum, or last temporal output
@@ -65,6 +65,15 @@ class Config:
     hybrid_delay_seed = 123  # independent of dataset and model seed
     hybrid_offset_distribution = "uniform"  # 'uniform', 'gaussian', or 'triangular'
     hybrid_offset_sigma = 2.0  # std dev for 'gaussian'; unused otherwise
+    # 'normal': a hybrid's shared axonal base (whether from its own random init or,
+    # in compare_mem_delays.py, injected from the paired axonal/synaptic model) is
+    # used unchanged, so its effective (post-offset) mean delay sits
+    # hybrid_max_synaptic_delay / 2 above that base, since the offsets are one-sided
+    # (>= 0). 'centered': networks.hybrid_centered_base shifts the base (only for
+    # hybrids, sign depends on pathway) so the effective mean delay matches the base
+    # itself instead. Read by both the hybrid network classes (networks.py) and
+    # compare_mem_delays.py.
+    hybrid_base_centering = "centered"  # 'normal' or 'centered'
     round_delays = False
     round_pos_each_epoch = False
 
