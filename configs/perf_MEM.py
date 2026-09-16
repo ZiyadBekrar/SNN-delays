@@ -63,7 +63,7 @@ class Config:
     # class, so hybrid checkpoints trained before that change will not load.
     hybrid_max_synaptic_delay = 6  # fixed integer offsets in [0, hybrid_max_synaptic_delay]
     hybrid_delay_seed = 123  # independent of dataset and model seed
-    hybrid_offset_distribution = "triangular"  # 'uniform', 'gaussian', or 'triangular'
+    hybrid_offset_distribution = "uniform"  # 'uniform', 'gaussian', or 'triangular'
     hybrid_offset_sigma = 2.0  # std dev for 'gaussian'; unused otherwise
     # 'normal': a hybrid's shared axonal base (whether from its own random init or,
     # in compare_mem_delays.py, injected from the paired axonal/synaptic model) is
