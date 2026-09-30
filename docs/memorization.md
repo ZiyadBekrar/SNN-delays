@@ -125,6 +125,13 @@ When enabled, each model's `delay_diagnostics/` directory contains:
   all parameters and minibatches of that snapshot's epoch; epoch zero has none.
 - Matching `.npz` files with signed raw samples and `.json` files with summary
   statistics, nonfinite counts, and missing-gradient step counts.
+- `epoch_00000_delay_weight.png` and subsequent snapshots: effective delay on
+  the x-axis versus absolute connection weight on the y-axis, one panel per delayed
+  layer. Only connections with delay parameters are included (including delays
+  whose value is zero); biases and undelayed projections are excluded. Axonal
+  delays are repeated for each outgoing connection; hybrid delays include fixed
+  offsets. Matching `.npz` files retain the paired delay/signed-weight samples. These
+  plots retain fractional delays even at the final epoch, before histogram rounding.
 - `hidden_delay_evolution.png`: outgoing delays for every hidden neuron across
   all epochs, plus `.npz` data and `.json` row labels. Hybrid traces exclude
   fixed offsets; synaptic traces average over outgoing targets and kernels.

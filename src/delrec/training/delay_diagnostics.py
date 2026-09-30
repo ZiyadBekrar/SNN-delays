@@ -85,6 +85,7 @@ class DelayDiagnostics:
         self.record_hidden_delays()
         if not (self.active or force) or not self.layers:
             return
+        self.plot_delay_weights()
         if not rounded:
             return self._plot_snapshot(rounded=False)
         # Use the network's own hybrid-aware rounding/clamping implementation.
@@ -96,6 +97,65 @@ class DelayDiagnostics:
         finally:
             for parameter, value in saved:
                 parameter.copy_(value)
+
+    @torch.no_grad()
+    def connection_delays_and_weights(self):
+        """Yield layer names and aligned effective delays/weights per connection.
+
+        Axonal feedforward filters precede a Linear projection: their source
+        delays broadcast over that projection's targets. Dense DCLS and recurrent
+        modules already carry the connection weights. Biases and ordinary
+        undelayed Linear projections are excluded; zero-valued delays are valid.
+        """
+        stages = list(self.model.layers)
+        following = {id(a): b for a, b in zip(stages, stages[1:])}
+        for name, module, attribute, _ in self.layers:
+            delay = getattr(module, attribute)
+            if attribute == 'recurrent_delays':
+                weight = module.recurrent_weights
+                delay = delay.expand_as(weight)  # (source,) or (target, source)
+            else:
+                delay = module.left_padding - (module.dilated_kernel_size[0] - 1) / 2 - delay
+                projection = following.get(id(module))
+                if (module.groups == module.in_channels == module.out_channels
+                        and isinstance(projection, torch.nn.Linear)):
+                    # (1, source, 1, kernel) -> (target, source, kernel).
+                    delay = delay[0, :, 0, :].unsqueeze(0)
+                    weight = projection.weight.unsqueeze(-1).expand(-1, -1, module.kernel_count)
+                    delay = delay.expand_as(weight)
+                else:
+                    weight = module.weight
+                    delay = delay[0].expand_as(weight)
+            yield name, self._array(delay), self._array(weight)
+
+    def plot_delay_weights(self):
+        """Scatter fractional delays against weight magnitudes; save signed data."""
+        import matplotlib.pyplot as plt
+
+        connections = list(self.connection_delays_and_weights())
+        if not connections:
+            return
+        self.directory.mkdir(parents=True, exist_ok=True)
+        fig, axes = plt.subplots(len(connections), 1, figsize=(8, 4 * len(connections)),
+                                 squeeze=False, layout='constrained')
+        arrays = {}
+        for ax, (name, delays, weights) in zip(axes[:, 0], connections):
+            arrays[f'{name}/delay'] = delays
+            arrays[f'{name}/weight'] = weights
+            finite = np.isfinite(delays) & np.isfinite(weights)
+            ax.scatter(delays[finite], np.abs(weights[finite]), s=10, alpha=.35, linewidths=0)
+            ax.set(title=f'{name} ({int(finite.sum()):,} connections)',
+                   xlabel='Effective delay (timesteps)', ylabel='Absolute connection weight',
+                   ylim=(0, None))
+            ax.grid(alpha=.2)
+        fig.suptitle(f'{type(self.model).__name__} — epoch {self.epoch}\n'
+                     'Fractional delays; hybrid offsets included; recurrent lag excludes the fixed feedback step')
+        stem = self.directory / f'epoch_{self.epoch:05d}_delay_weight'
+        np.savez_compressed(stem.with_suffix('.npz'), **arrays)
+        fig.savefig(stem.with_suffix('.png'), dpi=150)
+        if self.show:
+            plt.show()
+        plt.close(fig)
 
     def _plot_snapshot(self, rounded):
         import matplotlib.pyplot as plt
