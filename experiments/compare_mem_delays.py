@@ -195,12 +195,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('epochs', 'seed', 'dataset-seed', 'num-samples', 'hybrid-max-synaptic-delay', 'hybrid-delay-seed'):
         parser.add_argument('--' + name, type=int)
-    parser.add_argument('--hybrid-offset-distribution', choices=['uniform', 'gaussian', 'triangular'])
+    parser.add_argument('--hybrid-offset-distribution', choices=['uniform', 'gaussian', 'triangular'], default = 'uniform')
     parser.add_argument('--hybrid-offset-sigma', type=float)
     parser.add_argument('--hybrid-base-centering', choices=['normal', 'centered'],
                          help="'centered' shifts a hybrid's injected base so its effective mean "
-                              "delay matches the paired axonal/synaptic model's (see configs).")
-    parser.add_argument('--task-type', choices=['temporal', 'spatial'])
+                              "delay matches the paired axonal/synaptic model's (see configs).", default = 'normal')
+    parser.add_argument('--task-type', choices=['temporal', 'spatial'], default = 'temporal')
     parser.add_argument('--hidden-layers', help='Comma-separated widths')
     parser.add_argument('--out', type=Path)
     parser.add_argument('--device', choices=['cpu', 'cuda'], default='cpu')
