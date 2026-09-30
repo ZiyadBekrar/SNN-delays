@@ -106,6 +106,38 @@ and six final training accuracy bars (colour = parametrization, line style =
 pathway). All measurements use the training set. This is a single-seed
 comparison, not an estimate of variation across seeds.
 
+The comparison also writes `training_parameters.md` in the parent run directory,
+with the resolved model settings (including CLI and matching overrides), device,
+learning rates, and trainable parameter counts. Its generator is the standalone
+`delrec.training.run_recap` module.
+
+Delay diagnostics are disabled by default. Enable them with:
+
+```bash
+.venv/bin/python experiments/compare_mem_delays.py --delay-diagnostics --delay-diagnostics-every 10
+```
+
+When enabled, each model's `delay_diagnostics/` directory contains:
+
+- `epoch_00000.png` and subsequent snapshots: per-layer histograms of learned
+  delay parameters, effective delays, absolute raw gradients before clipping,
+  and absolute optimizer steps after delay clamping. Gradients and steps pool
+  all parameters and minibatches of that snapshot's epoch; epoch zero has none.
+- Matching `.npz` files with signed raw samples and `.json` files with summary
+  statistics, nonfinite counts, and missing-gradient step counts.
+- `hidden_delay_evolution.png`: outgoing delays for every hidden neuron across
+  all epochs, plus `.npz` data and `.json` row labels. Hybrid traces exclude
+  fixed offsets; synaptic traces average over outgoing targets and kernels.
+  Recurrent values exclude the mandatory one-step feedback lag.
+
+Snapshots are saved initially, every `delay_diagnostics_every` epochs (default
+10), and at the final epoch. Override the interval with
+`--delay-diagnostics-every N`. As in the experimental notebook, final histograms
+show temporarily rounded delays; fractional parameters are restored immediately.
+Metrics, checkpoints, and evolution heatmaps retain the training-time fractional
+delays. Diagnostics do not introduce early stopping. The ordinary `train_mem.py`
+run keeps diagnostics disabled.
+
 Supported overrides include `--epochs`, `--seed`, `--dataset-seed`,
 `--num-samples`, `--task-type`, `--hidden-layers`, `--device cpu|cuda`, and `--out`.
 For example:

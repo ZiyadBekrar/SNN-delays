@@ -31,6 +31,7 @@ from train_mem import ROOT, Config, networks, run, torch, plt
 from delrec.delay_layers import axonal_recdel
 from delrec.networks import dcls_module, hybrid_centered_base, learned_delay_parameter
 from delrec.training.mem import set_epoch
+from delrec.training.run_recap import save_training_recap
 from delrec.utils import reset_states, seed_everything
 
 
@@ -193,7 +194,10 @@ def matched_models(config):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('epochs', 'seed', 'dataset-seed', 'num-samples', 'hybrid-max-synaptic-delay', 'hybrid-delay-seed'):
+    parser.add_argument('--delay-diagnostics', action='store_true',
+                        help='Save delay/gradient snapshots and evolution heatmaps (disabled by default)')
+    for name in ('epochs', 'seed', 'dataset-seed', 'num-samples', 'hybrid-max-synaptic-delay',
+                 'hybrid-delay-seed', 'delay-diagnostics-every'):
         parser.add_argument('--' + name, type=int)
     parser.add_argument('--hybrid-offset-distribution', choices=['uniform', 'gaussian', 'triangular'], default = 'uniform')
     parser.add_argument('--hybrid-offset-sigma', type=float)
@@ -206,27 +210,34 @@ def main():
     parser.add_argument('--device', choices=['cpu', 'cuda'], default='cpu')
     args = parser.parse_args()
     config = Config()
+    config.delay_diagnostics = args.delay_diagnostics
     for key in ('epochs', 'seed', 'dataset_seed', 'num_samples', 'task_type', 'hybrid_max_synaptic_delay',
                 'hybrid_delay_seed', 'hybrid_offset_distribution', 'hybrid_offset_sigma',
-                'hybrid_base_centering'):
+                'hybrid_base_centering', 'delay_diagnostics_every'):
         if getattr(args, key) is not None:
             setattr(config, key, getattr(args, key))
     if args.hidden_layers:
         config.hidden_layers = [int(n) for n in args.hidden_layers.split(',')]
     if min(config.epochs, config.num_samples, *config.hidden_layers) < 1:
         parser.error('Epochs, samples and layer widths must be positive')
+    if args.delay_diagnostics and config.delay_diagnostics_every < 1:
+        parser.error('Delay diagnostics interval must be positive')
     torch.set_num_threads(config.cpu_threads)
     out = args.out or ROOT / 'exp' / 'MEM' / 'delay_comparison' / (
         f'{config.task_type}_seed{config.seed}_{datetime.now():%Y-%m-%d-%H-%M-%S-%f}')
     out.mkdir(parents=True, exist_ok=True)
     models = matched_models(config)
+    save_training_recap(
+        [(label, cfg, model) for (label, _, _), (cfg, model) in zip(MODELS, models, strict=True)],
+        args.device, out)
     initial_delay_values = {label: _model_delay_values(model, config)
                              for (label, _slug, _class_name), (_cfg, model) in zip(MODELS, models, strict=True)}
     print('Per pathway group: axonal/synaptic initial outputs matched; hybrids keep their own fixed offsets.', flush=True)
     results = {}
     histories = {}
     for (label, slug, _class_name), (cfg, model) in zip(MODELS, models, strict=True):
-        history, final, directory = run(cfg, torch.device(args.device), out / slug, model=model)
+        history, final, directory = run(cfg, torch.device(args.device), out / slug, model=model,
+                                        delay_diagnostics=args.delay_diagnostics)
         final['feedforward_delay_parameters'] = sum(learned_delay_parameter(m, 'P').numel() for m in model.layers if isinstance(m, dcls_module))
         final['recurrent_delay_parameters'] = sum(learned_delay_parameter(m, 'recurrent_delays').numel() for m in model.layers if isinstance(m, axonal_recdel))
         final['fixed_synaptic_offsets'] = sum(b.numel() for name, b in model.named_buffers() if name.endswith('.offsets'))

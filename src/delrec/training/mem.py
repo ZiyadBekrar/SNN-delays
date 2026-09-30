@@ -39,7 +39,7 @@ def set_epoch(model, config, epoch):
                 module.SIG.fill_(get_dcls_sigma_for_epoch(config, epoch))
 
 
-def run_epoch(loader, model, device, config, optimizer=None):
+def run_epoch(loader, model, device, config, optimizer=None, diagnostics=None):
     training = optimizer is not None
     model.train(training)
     total_loss, correct, count = 0.0, 0, 0
@@ -64,11 +64,15 @@ def run_epoch(loader, model, device, config, optimizer=None):
                 raise RuntimeError("Non-finite memorization loss")
             if training:
                 loss.backward()
+                if diagnostics is not None:
+                    diagnostics.before_step()
                 if config.grad_clip > 0:
                     torch.nn.utils.clip_grad_norm_(model.parameters(), config.grad_clip)
                 optimizer.step()
                 if hasattr(model, "clamp_delays"):
                     model.clamp_delays()
+                if diagnostics is not None:
+                    diagnostics.after_step()
             total_loss += loss.item() * labels.numel()
             correct += (logits.argmax(1) == labels).sum().item()
             count += labels.numel()
