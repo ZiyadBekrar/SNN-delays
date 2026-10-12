@@ -685,7 +685,7 @@ def _hybrid_params(config):
     """Validate and return ``(maximum, seed, distribution, sigma)`` for the hybrid
     delay classes.
 
-    ``maximum`` (``config.hybrid_max_synaptic_delay``, default 4) is the inclusive
+    ``maximum`` (``config.hybrid_offset_scale``, default 4) is the inclusive
     upper bound on the frozen per-synapse offsets; ``maximum == 0`` makes a hybrid
     byte-for-byte its paired axonal model. ``seed`` (``config.hybrid_delay_seed``,
     default 123) seeds the offset draw, independent of the dataset/model seed.
@@ -695,9 +695,9 @@ def _hybrid_params(config):
     deviation used only when ``distribution == 'gaussian'``, and must then be a
     positive number. ``kernel_count == 1`` is required (one delay per axon/synapse).
     """
-    maximum = getattr(config, 'hybrid_max_synaptic_delay', 4)
+    maximum = getattr(config, 'hybrid_offset_scale', 4)
     if int(maximum) != maximum or maximum < 0:
-        raise ValueError('hybrid_max_synaptic_delay must be a nonnegative integer')
+        raise ValueError('hybrid_offset_scale must be a nonnegative integer')
     if config.kernel_count != 1:
         raise ValueError('hybrid delay models require kernel_count=1 (one delay per axon/synapse).')
     distribution = getattr(config, 'hybrid_offset_distribution', 'uniform')
@@ -755,7 +755,7 @@ def hybrid_centered_base(base, config, *, pathway):
     ``maximum / 2``).
 
     A no-op unless ``config.hybrid_base_centering == 'centered'`` (the default,
-    ``'normal'``, leaves the effective mean sitting ``hybrid_max_synaptic_delay
+    ``'normal'``, leaves the effective mean sitting ``hybrid_offset_scale
     / 2`` above ``base``). The correction's sign is pathway-dependent: on the
     feedforward path DCLS's position ``P`` runs *opposite* the real delay
     (larger ``P`` == smaller lag; see ``_reparametrize_feedforward_delay`` and
@@ -770,7 +770,7 @@ def hybrid_centered_base(base, config, *, pathway):
     """
     if getattr(config, 'hybrid_base_centering', 'normal') != 'centered':
         return base
-    half = getattr(config, 'hybrid_max_synaptic_delay', 4) / 2.0
+    half = getattr(config, 'hybrid_offset_scale', 4) / 2.0
     return base + half if pathway == 'feedforward' else base - half
 
 
@@ -831,10 +831,10 @@ class SNN_hybrid_feedforward_delays(SNN_axonal_feedforward_delays):
     Effective feedforward delay d(i, j) = d_j + delta_ij (j = presynaptic source).
     d_j is one learned axonal delay per source, shared across its targets (as in
     ``SNN_axonal_feedforward_delays``); delta_ij is a per-synapse integer offset in
-    ``[0, hybrid_max_synaptic_delay]``, drawn once and stored as a buffer, never
+    ``[0, hybrid_offset_scale]``, drawn once and stored as a buffer, never
     trained.
 
-    ``hybrid_max_synaptic_delay == 0`` is byte-for-byte ``SNN_axonal_feedforward_delays``
+    ``hybrid_offset_scale == 0`` is byte-for-byte ``SNN_axonal_feedforward_delays``
     (same modules, same init at a fixed seed, same forward). For ``> 0`` each delayed
     projection becomes a single fused dense ``dcls_module`` (groups=1, kernel_count=1):
     its weight is a trainable projection (kaiming_uniform, as an ``nn.Linear``), its
@@ -843,7 +843,7 @@ class SNN_hybrid_feedforward_delays(SNN_axonal_feedforward_delays):
     plus the offsets. Old ``> 0`` checkpoints will not load.
 
     Config knobs (shared with the other hybrids):
-      hybrid_max_synaptic_delay : inclusive upper bound on delta_ij, integer >= 0 (default 4).
+      hybrid_offset_scale       : inclusive upper bound on delta_ij, integer >= 0 (default 4).
       hybrid_delay_seed         : RNG seed for the fixed offsets (default 123).
       hybrid_offset_distribution: 'uniform' (default), 'gaussian', or 'triangular'.
       hybrid_offset_sigma       : standard deviation, required when distribution is 'gaussian'.
@@ -934,7 +934,7 @@ class SNN_recurrent_hybrid_delays(SNN_axonal_recurrent_delays):
     tensor is tied to one learned (N,) axonal leaf plus the frozen (N, N) offsets.
 
     Config knobs (shared with the other hybrids):
-      hybrid_max_synaptic_delay : inclusive upper bound on delta_ij, integer >= 0 (default 4).
+      hybrid_offset_scale       : inclusive upper bound on delta_ij, integer >= 0 (default 4).
       hybrid_delay_seed         : RNG seed for the fixed offsets (default 123).
       hybrid_offset_distribution: 'uniform' (default), 'gaussian', or 'triangular'.
       hybrid_offset_sigma       : standard deviation, required when distribution is 'gaussian'.

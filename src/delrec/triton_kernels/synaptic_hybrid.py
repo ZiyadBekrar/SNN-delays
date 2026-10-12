@@ -2,7 +2,7 @@
 
 A hybrid ``synaptic_recdel`` has ``recurrent_delays[i, o] = base[o] + offset[i, o]``
 with ``base`` (per source ``o``) the only learned part and ``offset`` a frozen
-integer in ``[0, hybrid_max_synaptic_delay]``. Numerically it is an ordinary
+integer in ``[0, hybrid_offset_scale]``. Numerically it is an ordinary
 per-synapse delay, so:
 
   * forward  - the proven spike-sparse event-driven scatter

@@ -14,7 +14,7 @@ _GROUPS = {
     'Initialization': 'init_ff_weights init_dcls_weights init_rec_weights init_rec_delay rec_delay_init_gain init_recdel_offset delay_std_init',
     'Recurrent delays': 'max_rec_delay use_rec_bias use_sig_p sigma_init sigma_decay round_delays',
     'Feedforward delays': 'DCLSversion kernel_count max_feedforward_delay left_padding right_padding init_pos_a init_pos_b siginit round_pos_each_epoch',
-    'Hybrid delays': 'hybrid_max_synaptic_delay hybrid_delay_seed hybrid_offset_distribution hybrid_offset_sigma hybrid_base_centering',
+    'Hybrid delays': 'hybrid_offset_scale hybrid_delay_seed hybrid_offset_distribution hybrid_offset_sigma hybrid_base_centering',
     'Diagnostics': 'delay_diagnostics delay_diagnostics_every',
     'Execution': 'cpu_threads num_workers',
 }

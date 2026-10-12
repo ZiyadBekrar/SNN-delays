@@ -112,7 +112,7 @@ def _inject(model, canon, config):
     their own base at construction time) when
     ``config.hybrid_base_centering == 'centered'``, so its effective
     (post-offset) mean delay matches the paired axonal/synaptic model's instead
-    of sitting ``hybrid_max_synaptic_delay / 2`` above it.
+    of sitting ``hybrid_offset_scale / 2`` above it.
     """
     from torch.nn.utils import parametrize
     fi = ri = 0
@@ -196,7 +196,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--delay-diagnostics', action='store_true',
                         help='Save delay/gradient snapshots and evolution heatmaps (disabled by default)')
-    for name in ('epochs', 'seed', 'dataset-seed', 'num-samples', 'hybrid-max-synaptic-delay',
+    for name in ('epochs', 'seed', 'dataset-seed', 'num-samples', 'hybrid-offset-scale',
                  'hybrid-delay-seed', 'delay-diagnostics-every'):
         parser.add_argument('--' + name, type=int)
     parser.add_argument('--hybrid-offset-distribution', choices=['uniform', 'gaussian', 'triangular'], default = 'uniform')
@@ -211,7 +211,7 @@ def main():
     args = parser.parse_args()
     config = Config()
     config.delay_diagnostics = args.delay_diagnostics
-    for key in ('epochs', 'seed', 'dataset_seed', 'num_samples', 'task_type', 'hybrid_max_synaptic_delay',
+    for key in ('epochs', 'seed', 'dataset_seed', 'num_samples', 'task_type', 'hybrid_offset_scale',
                 'hybrid_delay_seed', 'hybrid_offset_distribution', 'hybrid_offset_sigma',
                 'hybrid_base_centering', 'delay_diagnostics_every'):
         if getattr(args, key) is not None:
@@ -268,7 +268,7 @@ def _model_delay_values(model, config):
     ``dilated_kernel_size // 2 - P``, always in ``[0, dilated_kernel_size - 1]``.
     Read the module's own ``dilated_kernel_size`` rather than
     ``config.max_feedforward_delay``: a hybrid's kernel is widened by
-    ``2 * hybrid_max_synaptic_delay`` to make room for its frozen per-synapse
+    ``2 * hybrid_offset_scale`` to make room for its frozen per-synapse
     offset (``_reparametrize_feedforward_delay``), so the two diverge there.
     Recurrent ``recurrent_delays`` is already the physical lag by definition
     (a spike reaches its targets at ``t + 1 + d``, delay_layers.py).

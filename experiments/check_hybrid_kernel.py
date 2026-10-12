@@ -52,7 +52,7 @@ def _config():
     cfg.recurrent_dropout_rate = 0.0
     cfg.no_recurrence_in_last_layer = False  # keep a real recdel in the one hidden layer
     cfg.kernel_count = 1
-    cfg.hybrid_max_synaptic_delay = 4
+    cfg.hybrid_offset_scale = 4
     return cfg
 
 

@@ -52,7 +52,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     for name in ("epochs", "seed", "dataset-seed", "num-samples",
-                 "hybrid-max-synaptic-delay", "hybrid-delay-seed"):
+                 "hybrid-offset-scale", "hybrid-delay-seed"):
         parser.add_argument("--" + name, type=int)
     parser.add_argument("--task-type", choices=["temporal", "spatial"])
     parser.add_argument("--hidden-layers", help="Comma-separated widths, e.g. 64,64")
@@ -63,7 +63,7 @@ def main():
 
     config = Config()
     for key in ("epochs", "seed", "dataset_seed", "num_samples", "task_type", "readout",
-                "hybrid_max_synaptic_delay", "hybrid_delay_seed"):
+                "hybrid_offset_scale", "hybrid_delay_seed"):
         value = getattr(args, key, None)
         if value is not None:
             setattr(config, key, value)

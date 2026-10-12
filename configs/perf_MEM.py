@@ -59,21 +59,13 @@ class Config:
     sigma_decay = 0.95
 
     #Hybrid delays configuration
-    # hybrid_max_synaptic_delay == 0 makes each hybrid byte-for-byte its paired axonal
+    # hybrid_offset_scale == 0 makes each hybrid byte-for-byte its paired axonal
     # model; > 0 uses a fused dense DCLS module whose init/bias now match the axonal
     # class, so hybrid checkpoints trained before that change will not load.
-    hybrid_max_synaptic_delay = 4  # fixed integer offsets in [0, hybrid_max_synaptic_delay]
+    hybrid_offset_scale = 4
     hybrid_delay_seed = 123  # independent of dataset and model seed
     hybrid_offset_distribution = "uniform"  # 'uniform', 'gaussian', or 'triangular'
     hybrid_offset_sigma = 2.0  # std dev for 'gaussian'; unused otherwise
-    # 'normal': a hybrid's shared axonal base (whether from its own random init or,
-    # in compare_mem_delays.py, injected from the paired axonal/synaptic model) is
-    # used unchanged, so its effective (post-offset) mean delay sits
-    # hybrid_max_synaptic_delay / 2 above that base, since the offsets are one-sided
-    # (>= 0). 'centered': networks.hybrid_centered_base shifts the base (only for
-    # hybrids, sign depends on pathway) so the effective mean delay matches the base
-    # itself instead. Read by both the hybrid network classes (networks.py) and
-    # compare_mem_delays.py.
     hybrid_base_centering = "centered"  # 'normal' or 'centered'
     round_delays = False
     round_pos_each_epoch = False
