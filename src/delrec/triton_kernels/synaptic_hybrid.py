@@ -92,8 +92,8 @@ if _HAVE_TRITON:
                           N: tl.constexpr, LM: tl.constexpr, BLOCK_O: tl.constexpr):
         """dd_t[o, i] = W[i,o] * sum_{l=1..LM-1} Cstack[i,o,l] * d/dd clamp(s-|l-1-d[i,o]|,0)/s^2
 
-        d/dd of the triangular kernel is sign(l-1-d)/s^2 inside its support and 0
-        outside - exactly what autograd gives through build_syn_mask (clamp/abs).
+        d/dd is sign(l-1-d)/s^2 inside and at the support boundary, and 0
+        outside, matching PyTorch's clamp(min=0) subgradient at zero.
         Ct is Cstack permuted to (o, i, l); Wt, dt are (o, i) = W.t(), d.t().
         """
         pid = tl.program_id(0)
@@ -107,7 +107,7 @@ if _HAVE_TRITON:
             for l in range(1, LM):
                 a = l - 1.0 - dv
                 g = tl.where(a > 0.0, inv_s2, tl.where(a < 0.0, -inv_s2, 0.0))
-                g = tl.where(tl.abs(a) < s, g, 0.0)
+                g = tl.where(tl.abs(a) <= s, g, 0.0)
                 c = tl.load(Ct_ptr + row + l, mask=om, other=0.0)
                 tap += g * c
             tl.store(dd_ptr + o * N + i, w * tap, mask=om)

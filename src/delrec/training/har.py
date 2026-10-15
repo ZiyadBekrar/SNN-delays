@@ -183,27 +183,27 @@ def init_optim_sche(model, config):
     for m in model.layers:
         if isinstance(m, torch.nn.Linear):
             weights.append(m.weight)
-            if config.bias:
+            if m.bias is not None:
                 weights.append(m.bias)
 
         elif isinstance(m, axonal_recdel):
             weights.append(m.recurrent_weights)
             if getattr(m, 'use_rec_bias', False):
                 weights.append(m.recurrent_bias)
-            positions.append(m.recurrent_delays)
+            positions.append(learned_delay_parameter(m, 'recurrent_delays'))
 
             if hasattr(m, 'p_spread'):
                 positions.append(m.p_spread)
 
         elif isinstance(m, dcls_module):
             weights.append(m.weight)
-            if config.bias:
+            if m.bias is not None:
                 weights.append(m.bias)
             positions.append(learned_delay_parameter(m, 'P'))
 
         elif isinstance(m, modified_batchnorm):
             weights_norm.append(m.weight)
-            if config.bias:
+            if m.bias is not None:
                 weights_norm.append(m.bias)
 
     optimizer = []

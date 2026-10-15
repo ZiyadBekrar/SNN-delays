@@ -163,6 +163,14 @@ class axonal_recdel(AxonalTorchScans, AxonalTritonScans, base.MemoryModule):
                 half_normal = torch.abs(torch.randn_like(self.recurrent_delays) * self.config.delay_std_init)
                 self.recurrent_delays.copy_(half_normal)
                 self.recurrent_delays.clamp_(min=0.0)
+            elif self.config.init_rec_delay == 'uniform_integer':
+                # Same discrete distribution as hybrid synaptic offsets.
+                maximum = self.config.hybrid_max_synaptic_delay
+                if int(maximum) != maximum or maximum < 0:
+                    raise ValueError('hybrid_max_synaptic_delay must be a nonnegative integer')
+                self.recurrent_delays.copy_(torch.randint(
+                    0, int(maximum) + 1, self.recurrent_delays.shape,
+                    device=self.recurrent_delays.device))
             elif self.config.init_rec_delay == 'uniform':
                 torch.nn.init.uniform_(self.recurrent_delays, a=self.config.init_recdel_offset, b=self.config.max_rec_delay)
                 self.recurrent_delays.clamp_(min=0.0)
@@ -294,4 +302,3 @@ class common_recdel(axonal_recdel):
         self.recurrent_delays = torch.nn.Parameter(torch.zeros(1), requires_grad=True)
         self.init_recurrent_delays()   # half_normal/uniform both work on shape (1,)
         self.forward_version = 'v2'    # broadcast-safe path
-

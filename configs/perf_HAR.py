@@ -84,6 +84,10 @@ class Config():
 
     ### Recurrent delays ###
 
+    # Hybrid models: fixed integer synaptic offsets drawn uniformly in [0, maximum].
+    hybrid_max_synaptic_delay = 4
+    hybrid_delay_seed = 123  # offset RNG, independent of the training seed
+
     use_sig_p = False
 
     delay_std_init = 3 #7 #5 #12
