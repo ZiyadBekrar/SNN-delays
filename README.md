@@ -24,9 +24,13 @@ wider spread helps, sigma is annealed to 0 over training.
 |---|---|---|
 | Axonal | one per presynaptic neuron, shared by its outgoing connections | `(N,)` |
 | Synaptic | one per connection | `(N, N)` |
+| Hybrid | axonal, plus a fixed per-connection integer offset drawn once and never trained | `(N,)` learned, `(N, N)` fixed |
 
-Either is learned jointly with the weights, or frozen at a rounded random initialization. The
-frozen models are the control that isolates delay learning. All experiments use leaky
+Axonal and synaptic are either learned jointly with the weights, or frozen at a rounded random
+initialization; the frozen models are the control that isolates delay learning. Hybrid keeps the
+axonal parameter count but recovers per-connection resolution: the effective delay of connection
+(i, j) is the learned axonal value d<sub>j</sub> plus a fixed offset delta<sub>ij</sub>, so it
+generalizes the axonal model exactly when every offset is zero. All experiments use leaky
 integrate-and-fire neurons.
 
 ## Install
@@ -78,10 +82,14 @@ python experiments/profiling/profile_kernels.py                  # kernel time a
 | `SNN_synaptic_recurrent_delays` | synaptic, learned |
 | `SNN_fixed_synaptic_recurrent_delays` | synaptic, fixed |
 | `SNN_common_recurrent_delays` | one delay shared by a whole layer |
+| `SNN_recurrent_hybrid_delays` | axonal, learned, plus a fixed per-synapse offset |
 | `SNN_vanilla_recurrent` | none, the delay-free control |
 
-Those are the classes of `src/delrec/networks.py`. SHD has its own zoo, `networks_shd.py`, with
-only the axonal and vanilla ones.
+Those are the recurrent-delay classes of `src/delrec/networks.py`. The module also holds
+feedforward-delay counterparts (`SNN_axonal_feedforward_delays`, `SNN_synaptic_feedforward_delays`,
+`SNN_hybrid_feedforward_delays`), used for the SSC baselines and for the delay-parametrization
+comparisons in [docs/memorization.md](docs/memorization.md). SHD has its own zoo,
+`networks_shd.py`, with only the axonal and vanilla ones.
 
 Hyperparameters are in `configs/perf_<BENCHMARK>.py`, one plain class per benchmark. Edit those
 rather than the entry point. [docs/training.md](docs/training.md)
@@ -120,17 +128,22 @@ DelRec/
 │
 ├── configs/                     hyperparameters, one module per benchmark
 ├── experiments/
-│   ├── train.py                 train one model on one benchmark
-│   ├── sweeps/                  multi-run sweeps, each with a parallel launcher
-│   ├── profiling/               kernel time and memory benchmarks
-│   └── make_figures/            one script per result, plus make_all.py
+│   ├── train.py                     train one model on one benchmark
+│   ├── train_mem.py                 train one model on the spike-memorization task
+│   ├── compare_mem_delays.py        axonal / synaptic / hybrid x feedforward / recurrent comparison
+│   ├── compare_mem_feedforward.py   feedforward-only analogue of the comparison above
+│   ├── check_hybrid_kernel.py       verify the hybrid delay's fused Triton kernel against the reference
+│   ├── sweeps/                      multi-run sweeps, each with a parallel launcher
+│   ├── profiling/                   kernel time and memory benchmarks
+│   └── make_figures/                one script per result, plus make_all.py
 │
+├── tests/                       unit tests, e.g. hybrid-delay invariance at offset scale 0
 ├── trained_models/              one directory per training run, 691 in total
 ├── figures/                     the generated figures and tables
 │   ├── measurements/            cached results of the analyses that need a GPU
 │   └── tables/                  the accuracy and significance tables
 │
-├── docs/                        installation, training, reproducing, architecture, checkpoints
+├── docs/                        installation, training, reproducing, architecture, checkpoints, memorization
 └── fetch_checkpoints.py         download the weights
 ```
 
