@@ -37,3 +37,6 @@ dist/
 exp/
 
 CLAUDE.md
+
+/src/delrec/datasets/HAR/
+*.swp

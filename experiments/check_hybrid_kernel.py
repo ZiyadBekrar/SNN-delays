@@ -128,6 +128,32 @@ def check(model_name, device):
     return ok
 
 
+def check_delay_gradient(device):
+    """Compare the fused delay derivative to autograd, including support edges."""
+    from delrec.triton_kernels.delays import build_syn_mask
+
+    if device.type != "cuda":
+        print("  delay-gradient boundary check: SKIP (requires CUDA)")
+        return True
+    from delrec.triton_kernels.synaptic_hybrid import _delay_grad
+
+    # Non-square tiles (N=5) also exercise the masked output lanes. Integer
+    # delays at sigma=0 catch the former strict-support bug; fractional delays
+    # and wider kernels cover both interior and boundary derivatives.
+    values = torch.tensor([0., 1., 2., 0.25, 1.5], device=device)
+    for sigma in (0., 0.5, 1.):
+        d = values.repeat(5, 1).requires_grad_()
+        W = torch.arange(1, 26, device=device).float().reshape(5, 5) / 25
+        mask, L = build_syn_mask(d, sigma, None, False)
+        C = torch.arange(L, device=device).float().square().expand(5, 5, L).contiguous()
+        ref, = torch.autograd.grad((mask * W.unsqueeze(-1) * C).sum(), d)
+        actual = _delay_grad(C, W, d.detach(), sigma, L)
+        torch.testing.assert_close(actual, ref, atol=2e-5, rtol=2e-5)
+        assert ref[:, :3].abs().max() > 0, "integer-delay case must exercise nonzero gradients"
+    print("  delay-gradient boundary check: PASS (Triton vs autograd)")
+    return True
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--device", choices=["cpu", "cuda"],
@@ -136,7 +162,9 @@ def main():
     device = torch.device(args.device)
     print(f"hybrid-kernel check on {device} (torch {torch.__version__})", flush=True)
 
-    all_ok = all(check(name, device) for name in MODELS)
+    all_ok = check_delay_gradient(device)
+    for name in MODELS:
+        all_ok = check(name, device) and all_ok
     print("RESULT:", "PASS" if all_ok else "FAIL", flush=True)
     sys.exit(0 if all_ok else 1)
 

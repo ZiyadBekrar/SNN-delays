@@ -131,6 +131,15 @@ def run_seed(spec, args, seed):
 
     config = cfg_mod.Config()
     config.seed = seed
+    if args.init_rec_delay is not None:
+        config.init_rec_delay = args.init_rec_delay
+    if args.delay_std_init is not None:
+        config.delay_std_init = args.delay_std_init
+    if args.hybrid_offset_scale is not None:
+        config.hybrid_offset_scale = args.hybrid_offset_scale
+    if args.hybrid_delay_seed is not None:
+        config.hybrid_delay_seed = args.hybrid_delay_seed
+    config.recurrent_weight_ablation = args.recurrent_weights
     if args.epochs:
         config.epochs = args.epochs
     if args.smoke:
@@ -147,6 +156,15 @@ def run_seed(spec, args, seed):
     model_cls = getattr(zoo, args.model or spec.default_model)
     print(f"Using model class: {model_cls.__name__}")
     model = model_cls(config).to(device)
+    if args.recurrent_weights != "default":
+        layers = [m for m in model.modules() if isinstance(m, axonal_recdel)]
+        if not layers:
+            raise ValueError("This model has no recurrent delay layers to ablate")
+        for layer in layers:
+            with torch.no_grad():
+                layer.recurrent_weights.zero_()
+            if args.recurrent_weights == "zero-frozen":
+                layer.recurrent_weights.requires_grad_(False)
     apply_kernels(model, args.kernel, args.synaptic_kernel)
     optimizer, scheduler = trainer.init_optim_sche(model, config)
     count_parameters(model)
@@ -197,6 +215,13 @@ def run_seed(spec, args, seed):
         val_res[str(epoch)] = [val_acc, val_loss]
         train_res.to_csv(run_dir / "train_res.csv", index=True)
         val_res.to_csv(run_dir / "val_res.csv", index=True)
+
+        if args.save_delay_history and (epoch + 1) % args.delay_history_interval == 0:
+            snapshot = delay_snapshot(model)
+            if snapshot:
+                history_dir = run_dir / "delay_history"
+                history_dir.mkdir(exist_ok=True)
+                np.savez_compressed(history_dir / f"epoch_{epoch:04d}.npz", **snapshot)
 
         state = {
             "epoch": epoch,
@@ -257,13 +282,34 @@ def main():
     p.add_argument("--seeds", default="0", help="comma-separated, e.g. 0,1,2,3,4")
     p.add_argument("--kernel", default=os.environ.get("REC_FWD") or None,
                    help="axonal recurrent scan: v1|v2|triton_exact")
+    p.add_argument("--save-delay-history", action="store_true",
+                   help="save per-layer delays after each validation epoch for analysis")
+    p.add_argument("--delay-history-interval", type=int, default=1,
+                   help="save delay history every N completed epochs (default: 1; filenames are zero-based)")
     p.add_argument("--synaptic-kernel", default=os.environ.get("SYN_REC_FWD") or None,
                    help="synaptic recurrent scan: v1|v2|eventdriven")
     p.add_argument("--epochs", type=int, default=None, help="override the config")
+    p.add_argument("--delay-std-init", type=float, default=None,
+                   help="override delay initialization std (including values below 3)")
+    p.add_argument("--hybrid-offset-scale", type=int, default=None,
+                   help="inclusive upper bound on hybrid synaptic offsets (nonnegative integer)")
+    p.add_argument("--hybrid-delay-seed", type=int, default=None,
+                   help="override the independent RNG seed for fixed hybrid offsets")
+    p.add_argument("--init-rec-delay", choices=("half_normal", "uniform", "uniform_integer"),
+                   default=None, help="delay initialization; uniform_integer samples 0..hybrid_offset_scale inclusive")
+    p.add_argument("--recurrent-weights", default="default",
+                   choices=("default", "zero-init", "zero-frozen"),
+                   help="zero recurrent matrices once or freeze them at zero; biases unchanged")
     p.add_argument("--out", default=None, help="run directory (default: exp/<dataset>/...)")
     p.add_argument("--smoke", action="store_true",
                    help="2 epochs over a handful of batches, to check the pipeline runs")
     args = p.parse_args()
+    if args.delay_history_interval < 1:
+        p.error("--delay-history-interval must be at least 1")
+    if args.hybrid_offset_scale is not None and args.hybrid_offset_scale < 0:
+        p.error("--hybrid-offset-scale must be nonnegative")
+    if args.delay_std_init is not None and (not np.isfinite(args.delay_std_init) or args.delay_std_init < 0):
+        p.error("--delay-std-init must be finite and nonnegative")
 
     spec = SPECS[args.dataset]
     seeds = [int(s) for s in args.seeds.split(",")]
