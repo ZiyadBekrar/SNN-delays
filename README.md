@@ -33,124 +33,43 @@ axonal parameter count but recovers per-connection resolution: the effective del
 generalizes the axonal model exactly when every offset is zero. All experiments use leaky
 integrate-and-fire neurons.
 
-## Install
+## TOI Task Experimentation
+
+Feedforward-only delay-parametrization comparison:
 
 ```bash
-git clone https://github.com/alexmaxad/DelRec.git && cd DelRec
-pip install -r requirements.txt
+python experiments/compare_mem_feedforward.py
 ```
 
-Python 3.10 or newer. `requirements.txt` pins the environment that produced every number
-here. `delrec` itself needs no install: every entry point puts the repository and `src/` on
-the import path, so run the commands below from the repository root.
-Triton is optional: the layers are plain PyTorch and run without it, only slower.
-[docs/installation.md](docs/installation.md)
-
-## Reproduce the paper
-
-Every figure and table, with no GPU, no dataset and no download:
+Both feedforward and recurrent comparisons:
 
 ```bash
-python experiments/make_figures/make_all.py --measurements-only
-python experiments/make_figures/make_all.py --list      # what each script produces and needs
+python experiments/compare_mem_delays.py
 ```
 
-The weights themselves (`best.pth`, 385 MB in total) are on Zenodo at
-[10.5281/zenodo.21704323](https://doi.org/10.5281/zenodo.21704323). They are needed only to run
-a model forward, which one figure and any recomputation of an analysis require:
+All setup is done in `configs/perf_MEM.py`. The most important parameters to tune:
 
-```bash
-python fetch_checkpoints.py --list
-python fetch_checkpoints.py --dataset ssc
-```
-
-[docs/reproducing.md](docs/reproducing.md) · [docs/checkpoints.md](docs/checkpoints.md)
-
-## Train
-
-```bash
-python experiments/train.py --dataset ssc --model SNN_axonal_recurrent_delays --seeds 0,1,2,3,4
-python experiments/train.py --dataset al --smoke                 # 2 epochs on a few batches
-python experiments/sweeps/parallel_sweep_HAR_delaystd.py         # one process per run per GPU
-python experiments/profiling/profile_kernels.py                  # kernel time and memory
-```
-
-| model | delays |
+| parameter | meaning |
 |---|---|
-| `SNN_axonal_recurrent_delays` | axonal, learned |
-| `SNN_fixed_recurrent_delays` | axonal, fixed |
-| `SNN_synaptic_recurrent_delays` | synaptic, learned |
-| `SNN_fixed_synaptic_recurrent_delays` | synaptic, fixed |
-| `SNN_common_recurrent_delays` | one delay shared by a whole layer |
-| `SNN_recurrent_hybrid_delays` | axonal, learned, plus a fixed per-synapse offset |
-| `SNN_vanilla_recurrent` | none, the delay-free control |
+| `hidden_layers` | sets the network architecture |
+| `epochs` | number of training epochs |
+| `num_samples` | default: 256 |
+| `input_size` | default: 8 |
+| `time_window` | default: 32 |
+| `output_size` | default: 4 |
+| `input_gain` | default: 1.0 |
+| `batch_size` | default: 64 |
 
-Those are the recurrent-delay classes of `src/delrec/networks.py`. The module also holds
-feedforward-delay counterparts (`SNN_axonal_feedforward_delays`, `SNN_synaptic_feedforward_delays`,
-`SNN_hybrid_feedforward_delays`), used for the SSC baselines and for the delay-parametrization
-comparisons in [docs/memorization.md](docs/memorization.md). SHD has its own zoo,
-`networks_shd.py`, with only the axonal and vanilla ones.
+### `tests/` folder
 
-Hyperparameters are in `configs/perf_<BENCHMARK>.py`, one plain class per benchmark. Edit those
-rather than the entry point. [docs/training.md](docs/training.md)
-
-## Datasets
-
-Needed only to train, or to recompute an analysis. Place under `Datasets/` at the repository
-root. Paths and preprocessing in [docs/installation.md](docs/installation.md).
-
-| Benchmark | Task | Source |
-|---|---|---|
-| SSC | Spiking Speech Commands, 35 classes | [zenkelab.org/datasets](https://zenkelab.org/datasets), place the three `.h5` files manually |
-| PS-MNIST | permuted sequential MNIST | torchvision, downloaded on first use |
-| AL | Autonomous Localization, 2 classes | generated on first use, following the Neuromorphic Sequential Arena |
-| HAR | WISDM smartwatch activity, 18 classes | [WISDM 2019](https://archive.ics.uci.edu/dataset/507/wisdm+smartphone+and+smartwatch+activity+and+biometrics+dataset), extract manually |
-| Mackey-Glass | chaotic time-series forecasting | integrated in memory, nothing to download |
-| SHD | Spiking Heidelberg Digits, 20 classes | downloaded on first use |
-
-SSC and SHD are from Cramer et al. (2022), AL and HAR follow the pipeline and splits of Chen et
-al. (2025), Mackey-Glass follows Jaeger and Haas (2004).
-
-## File tree
-
-```text
-DelRec/
-├── src/delrec/                  the library
-│   ├── delay_layers.py          recurrent layers, parameters, forward dispatch
-│   ├── delay_layers_pytorch.py  plain PyTorch implementation, the reference
-│   ├── delay_layers_triton.py   the same as fused GPU kernels, optional
-│   ├── triton_kernels/          the raw Triton kernels the latter calls
-│   ├── networks.py              architectures for SSC, PS-MNIST, HAR, AL, Mackey-Glass
-│   ├── networks_shd.py          architectures for SHD
-│   ├── datasets/                loaders for the six benchmarks
-│   ├── training/                one train and test loop per benchmark
-│   └── utils.py                 seeding, state reset, losses, metrics
-│
-├── configs/                     hyperparameters, one module per benchmark
-├── experiments/
-│   ├── train.py                     train one model on one benchmark
-│   ├── train_mem.py                 train one model on the spike-memorization task
-│   ├── compare_mem_delays.py        axonal / synaptic / hybrid x feedforward / recurrent comparison
-│   ├── compare_mem_feedforward.py   feedforward-only analogue of the comparison above
-│   ├── sweeps/                      multi-run sweeps, each with a parallel launcher
-│   ├── profiling/                   kernel time and memory benchmarks
-│   └── make_figures/                one script per result, plus make_all.py
-│
-├── tests/                       unit tests, e.g. hybrid-delay invariance at offset scale 0
-│   └── check_hybrid_kernel.py   verify the hybrid delay's fused Triton kernel against the reference
-├── trained_models/              one directory per training run, 691 in total
-├── figures/                     the generated figures and tables
-│   ├── measurements/            cached results of the analyses that need a GPU
-│   └── tables/                  the accuracy and significance tables
-│
-├── docs/                        installation, training, reproducing, architecture, checkpoints, memorization
-└── fetch_checkpoints.py         download the weights
-```
-
-How those pieces fit together: [docs/architecture.md](docs/architecture.md).
-
-For training-set-only random-label memorization with recurrent and feedforward
-delays, see [docs/memorization.md](docs/memorization.md).
+- `check_hybrid_kernel.py` - verifies the hybrid delay networks before trusting a GPU run: on CUDA
+  it runs the recurrent hybrid's fused Triton path and the pure-PyTorch reference side by side and
+  asserts the forward output and every parameter gradient match.
+  This is what `kaggle/run.py` runs before every GPU comparison.
+- `test_hybrid_delay_invariance.py` - pytest unit tests asserting the hybrid delay classes
+  generalize their paired axonal models: at `hybrid_offset_scale == 0` a hybrid model must be
+  byte-for-byte identical to the axonal one (same `state_dict`, same init, same forward); at
+  `> 0` it must still build, keep the axonal parameter count, and produce a finite forward.
 
 ## Citation
 
