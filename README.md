@@ -60,6 +60,33 @@ All setup is done in `configs/perf_MEM.py`. The most important parameters to tun
 | `input_gain` | default: 1.0 |
 | `batch_size` | default: 64 |
 
+## Reproducing HAR Table 8
+
+To reproduce the experiments used for Table 8 of the technical report, run:
+
+```bash
+python experiments/scripts/run_HAR_table8.py
+```
+
+The script launches the six HAR configurations (feedforward and recurrent, each with axonal,
+hybrid, and synaptic delays) for seeds 0, 1, and 2 over 100 epochs. It uses commands equivalent
+to:
+
+```bash
+python experiments/train.py --dataset har \
+  --model SNN_recurrent_hybrid_delays \
+  --seeds 0,1,2 --epochs 100
+```
+
+Each seed is executed separately so that all outputs can be stored safely under one timestamped
+directory in `exp/HAR/table8/`. The script also covers the newly implemented hybrid-delay model
+classes. To inspect the 18 commands without starting training, use:
+
+After all runs have completed, execute the first two cells of
+`notebooks/compare_HAR_recurrent.ipynb`. They automatically select the latest Table 8 run,
+aggregate the three seeds with the population standard deviation, and export the reconstructed
+table to `figures/har_comparison/table6_HAR.csv`.
+
 ### `tests/` folder
 
 - `check_hybrid_kernel.py` - verifies the hybrid delay networks before trusting a GPU run: on CUDA
