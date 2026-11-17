@@ -64,7 +64,7 @@ def main():
     # 4. The hybrid delay layers use a fused Triton path on CUDA. Prove it matches
     #    the pure-torch reference (forward + every gradient) before trusting the
     #    numbers below - a non-zero exit here aborts the run.
-    sh(sys.executable, os.path.join(CHECKOUT, "experiments", "check_hybrid_kernel.py"),
+    sh(sys.executable, os.path.join(CHECKOUT, "tests", "check_hybrid_kernel.py"),
        "--device", "cuda")
 
     # 5. Run the comparison on the GPU.

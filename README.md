@@ -132,12 +132,12 @@ DelRec/
 │   ├── train_mem.py                 train one model on the spike-memorization task
 │   ├── compare_mem_delays.py        axonal / synaptic / hybrid x feedforward / recurrent comparison
 │   ├── compare_mem_feedforward.py   feedforward-only analogue of the comparison above
-│   ├── check_hybrid_kernel.py       verify the hybrid delay's fused Triton kernel against the reference
 │   ├── sweeps/                      multi-run sweeps, each with a parallel launcher
 │   ├── profiling/                   kernel time and memory benchmarks
 │   └── make_figures/                one script per result, plus make_all.py
 │
 ├── tests/                       unit tests, e.g. hybrid-delay invariance at offset scale 0
+│   └── check_hybrid_kernel.py   verify the hybrid delay's fused Triton kernel against the reference
 ├── trained_models/              one directory per training run, 691 in total
 ├── figures/                     the generated figures and tables
 │   ├── measurements/            cached results of the analyses that need a GPU
