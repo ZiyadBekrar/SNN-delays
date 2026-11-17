@@ -1,6 +1,13 @@
 # On every push, run experiments/compare_mem_delays.py on a Kaggle GPU kernel and
-# wait for it. Needs ONE repo secret (Settings -> Secrets and variables -> Actions):
-#   KAGGLE_API_TOKEN = the "KGAT_..." token from https://www.kaggle.com/settings -> API
+# wait for it. Needs one repo secret and one repo variable (Settings -> Secrets
+# and variables -> Actions):
+#   KAGGLE_API_TOKEN (secret)  = the "KGAT_..." token from https://www.kaggle.com/settings -> API
+#   KAGGLE_USERNAME  (variable) = the Kaggle account the kernel is pushed under
+#     gh variable set KAGGLE_USERNAME --body your-kaggle-username
+#
+# The kernel is pushed as "<KAGGLE_USERNAME>/snn-delays-gpu" and clones this
+# fork's own repo (github.repository) at the pushed commit, so each fork's
+# Kaggle run tests its own code under its own Kaggle account.
 #
 # Kill switch: set the repository variable KAGGLE_GPU to "false" and pushes stop
 # triggering the Kaggle run (any other value, or unset, keeps it on).
@@ -24,7 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
-      KERNEL: ziyadcs/snn-delays-gpu
+      KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+      KERNEL: ${{ vars.KAGGLE_USERNAME }}/snn-delays-gpu
+      REPO_URL: https://github.com/${{ github.repository }}.git
       KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +47,12 @@ jobs:
 
       - name: Configure Kaggle auth
         run: |
+          if [ -z "$KAGGLE_USERNAME" ]; then
+            echo "::error::Set the KAGGLE_USERNAME repository variable to the Kaggle account" \
+                 "the kernel should be pushed under (Settings -> Secrets and variables ->" \
+                 "Actions -> Variables)."
+            exit 1
+          fi
           token="$(printf '%s' "$KAGGLE_API_TOKEN" | tr -d '[:space:]')"
           if [ -z "$token" ]; then
             echo "::error::Set the KAGGLE_API_TOKEN repository secret to the 'KGAT_...'" \
@@ -62,8 +77,11 @@ jobs:
           fi
           echo "Kaggle auth OK"
 
-      - name: Pin the kernel to this commit
-        run: sed -i "s|__COMMIT_SHA__|${GITHUB_SHA}|" kaggle/run.py
+      - name: Fill in kernel id, repo URL and commit
+        run: |
+          sed -i "s|__KAGGLE_USERNAME__|${KAGGLE_USERNAME}|" kaggle/kernel-metadata.json
+          sed -i "s|__REPO_URL__|${REPO_URL}|" kaggle/run.py
+          sed -i "s|__COMMIT_SHA__|${GITHUB_SHA}|" kaggle/run.py
 
       - name: Push kernel and start the GPU run
         run: kaggle kernels push -p kaggle

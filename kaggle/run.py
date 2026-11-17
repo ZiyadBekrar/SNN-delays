@@ -2,8 +2,10 @@
 
 This file is uploaded as a Kaggle *script* kernel by
 ``.github/workflows/kaggle-gpu.yml``. Script kernels accept no arguments, so the
-workflow rewrites ``COMMIT`` below with ``sed`` before ``kaggle kernels push``.
-It clones the repo at that commit, installs only the packages Kaggle's image
+workflow rewrites ``REPO_URL`` and ``COMMIT`` below with ``sed`` before
+``kaggle kernels push`` (``REPO_URL`` from the fork's own ``github.repository``,
+so each fork tests its own code; ``COMMIT`` to the exact pushed commit). It
+clones that repo at that commit, installs only the packages Kaggle's image
 lacks (never torch), and runs ``experiments/compare_mem_delays.py`` on the GPU,
 writing every artifact under ``/kaggle/working`` so the workflow can download it.
 """
@@ -12,7 +14,7 @@ import os
 import subprocess
 import sys
 
-REPO_URL = "https://github.com/ZiyadBekrar/SNN-delays.git"
+REPO_URL = "__REPO_URL__"          # rewritten by the workflow to this fork's own clone URL
 COMMIT = "__COMMIT_SHA__"          # rewritten by the workflow; unset -> default branch HEAD
 CHECKOUT = "/tmp/snn-delays"
 RESULTS = "/kaggle/working/delay_comparison"
@@ -25,6 +27,9 @@ def sh(*cmd, **kw):
 
 def main():
     # 1. Source at the exact commit under test.
+    if REPO_URL.startswith("__"):
+        raise SystemExit("REPO_URL is still the placeholder - set it to a real clone URL "
+                         "before pushing this kernel (the workflow does this automatically).")
     sh("git", "clone", REPO_URL, CHECKOUT)
     if COMMIT and not COMMIT.startswith("__"):
         sh("git", "-C", CHECKOUT, "checkout", "--detach", COMMIT)

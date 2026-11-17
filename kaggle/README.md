@@ -1,9 +1,8 @@
 # Push-triggered Kaggle GPU run
 
-Every push to `ZiyadBekrar/SNN-delays` makes GitHub Actions
-(`.github/workflows/kaggle-gpu.yml`) upload `kaggle/` as the Kaggle script kernel
-[`ziyadcs/snn-delays-gpu`](https://www.kaggle.com/code/ziyadcs/snn-delays-gpu)
-and run it on a GPU. The kernel clones the repo at the pushed commit and runs
+Every push to your fork makes GitHub Actions (`.github/workflows/kaggle-gpu.yml`)
+upload `kaggle/` as the Kaggle script kernel `<your-kaggle-username>/snn-delays-gpu`
+and run it on a GPU. The kernel clones your fork at the pushed commit and runs
 `experiments/compare_mem_delays.py --device cuda`.
 
 ## One-time setup
@@ -12,10 +11,11 @@ and run it on a GPU. The kernel clones the repo at the pushed commit and runs
    now issues a single access token that looks like `KGAT_625ffa74...` (the old
    `kaggle.json` with `username` + 32-char `key` is gone). Copy the **whole
    string**, `KGAT_` prefix included.
-2. GitHub repo -> **Settings -> Secrets and variables -> Actions -> New repository secret**
-   (a *Repository* secret on `ZiyadBekrar/SNN-delays` itself, not an
-   Environment/Dependabot secret):
-   - `KAGGLE_API_TOKEN` = the full `KGAT_...` string
+2. GitHub repo -> **Settings -> Secrets and variables -> Actions**
+   (on your fork itself, not an Environment/Dependabot secret or variable):
+   - **Secrets -> New repository secret**: `KAGGLE_API_TOKEN` = the full `KGAT_...` string
+   - **Variables -> New repository variable**: `KAGGLE_USERNAME` = your Kaggle account name
+     (the kernel is pushed as `<KAGGLE_USERNAME>/snn-delays-gpu`)
 3. Push. First run creates the kernel; later pushes add versions.
 
 Auth failures:
@@ -34,8 +34,14 @@ Run it locally instead:
 ```bash
 pip install --upgrade kaggle
 export KAGGLE_API_TOKEN=KGAT_...          # or: mkdir -p ~/.kaggle && printf %s "$KAGGLE_API_TOKEN" > ~/.kaggle/access_token
-cd kaggle && kaggle kernels push -p .
+cd kaggle
+sed -i "s|__KAGGLE_USERNAME__|<your-kaggle-username>|" kernel-metadata.json
+sed -i "s|__REPO_URL__|<your-fork-clone-url>|" run.py
+kaggle kernels push -p .
 ```
+
+(the workflow does both substitutions for you on every push; they're only needed
+when pushing by hand from a clean checkout)
 
 ## Where the results are
 
@@ -71,15 +77,16 @@ Repo -> **Actions** tab -> the **kaggle-gpu** run for your commit.
 
 ### 2. The Kaggle kernel page
 
-<https://www.kaggle.com/code/ziyadcs/snn-delays-gpu> -> **Output** and **Logs**
-tabs. Each push is a new **Version** (top-right dropdown) with its own output and
-log. This is the source of truth if the Action's download step failed.
+`https://www.kaggle.com/code/<your-kaggle-username>/snn-delays-gpu` -> **Output**
+and **Logs** tabs. Each push is a new **Version** (top-right dropdown) with its
+own output and log. This is the source of truth if the Action's download step
+failed.
 
 ### 3. From your machine
 
 ```bash
-kaggle kernels status ziyadcs/snn-delays-gpu            # queued | running | complete | error
-kaggle kernels output ziyadcs/snn-delays-gpu -p ./out   # same files as the zip above
+kaggle kernels status <your-kaggle-username>/snn-delays-gpu            # queued | running | complete | error
+kaggle kernels output <your-kaggle-username>/snn-delays-gpu -p ./out   # same files as the zip above
 ```
 
 ## Notes / limits
