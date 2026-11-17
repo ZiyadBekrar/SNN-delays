@@ -9,14 +9,7 @@ together:
     Hybrid FF    SNN_hybrid_feedforward_delays        (learned axonal delay + fixed random
                                                 per-synapse offset, d_ij = d_j + delta_ij)
 
-This is the feedforward analogue of experiments/compare_mem_delays.py (which
-compares axonal/synaptic/hybrid delays on BOTH pathways). Here there is no
-recurrence and no matched-initialisation step: the four architectures do not share
-a layer structure, so each is built from the same RNG seed and trained on the same
-data, exactly as a single experiments/train_mem.py run would.
-
 Run: python experiments/compare_mem_feedforward.py
-     python experiments/compare_mem_feedforward.py --epochs 100 --hidden-layers 64,64
 """
 
 import argparse

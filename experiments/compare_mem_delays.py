@@ -1,13 +1,11 @@
-"""Delay-parametrization x pathway memorization experiment (3 x 2).
-
-All measurements use training data. Six models, each a delay parametrization
+"""Six models, each a delay parametrization
 (axonal / synaptic / hybrid) on a pathway (feedforward only / recurrent only):
 
   axonal    one learned delay per source neuron, shared by its connections
   synaptic  one learned delay per connection
   hybrid    learned axonal delay + a fixed random per-synapse integer offset
 
-All six are seeded from ONE global reference: ``generate_matched_parameters``
+All six are seeded from one global reference: ``generate_matched_parameters``
 builds one RNG-consistent set of feedforward weights/biases, feedforward axonal
 delays, recurrent weights/biases and recurrent axonal delays, which are then
 injected into every model. Within each pathway group the axonal and synaptic
@@ -15,7 +13,7 @@ models therefore start from identical initial outputs (asserted); the hybrids
 keep their own fixed random offsets, so they start from different effective
 delays by design.
 
-Run: .venv/bin/python experiments/compare_mem_delays.py
+Run: python experiments/compare_mem_delays.py
 """
 
 import argparse
